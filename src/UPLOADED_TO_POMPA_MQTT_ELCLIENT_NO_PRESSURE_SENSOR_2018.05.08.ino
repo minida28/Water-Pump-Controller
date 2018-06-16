@@ -9,9 +9,7 @@
 
 //#include <ELClientWebServer.h>
 
-#define SYNC_INTERVAL  21600    // Sync interval; in second, 21600 = 6 hours
-
-
+#define SYNC_INTERVAL 21600 // Sync interval; in second, 21600 = 6 hours
 
 // response buffer length
 //const uint16_t BUF_LEN = 266;
@@ -30,14 +28,12 @@ const int pinBuzzer = 12;
 
 /* Timer parameter for Manual Mode Switch  */
 //unsigned long previousMillisSwitchManualModeON = 0;
-long onDelaySwitchManualMode = 50;                            // nearly instantaneous
-long offDelaySwitchManualMode = 50;                           // nearly instantaneous
-
+long onDelaySwitchManualMode = 50;  // nearly instantaneous
+long offDelaySwitchManualMode = 50; // nearly instantaneous
 
 /* Timer parameter for Level Switch */
-long onDelayLevelSwitch = 50;                               // Delay time to make sure the LevelSwitch is completely ON; in millisSecond.
+long onDelayLevelSwitch = 50; // Delay time to make sure the LevelSwitch is completely ON; in millisSecond.
 long offDelayLevelSwitch = 50;
-
 
 /* Timer parameter for Start/Stop Pump */
 
@@ -53,76 +49,73 @@ long offDelayLevelSwitch = 50;
 
 unsigned long previousMillis;
 
-
-
 //---------------------- PARAMETER VARIABLES -------------//
 
-boolean stateLevelSwitch;
-boolean oldStateLevelSwitch;
-boolean stateSwitchManualMode;
-boolean oldStateSwitchManualMode;
-boolean stateSwitchPump;
-boolean oldStateSwitchPump;
-boolean stateSwitchSolenoidValve;
-boolean oldStateSwitchSolenoidValve;
-boolean stateLedPower;
-boolean oldstateLedPower;
+bool stateLevelSwitch;
+bool oldStateLevelSwitch;
+bool stateSwitchManualMode;
+bool oldStateSwitchManualMode;
+bool stateSwitchPump;
+bool oldStateSwitchPump;
+bool stateSwitchSolenoidValve;
+bool oldStateSwitchSolenoidValve;
+bool stateLedPower;
+bool oldstateLedPower;
 
 // Pump state variables
-//boolean oldStatePump = HIGH;                // Default pump state
+//bool oldStatePump = HIGH;                // Default pump state
 unsigned long startDelayPumpON = 0;
-long onDelayPumpON = 5000;                    // Default: 3s; How long delay before starting the pump ON; example: when level switch is ON
+long onDelayPumpON = 5000; // Default: 3s; How long delay before starting the pump ON; example: when level switch is ON
 
 // Current check variables
 unsigned long startTimerCurrentCheck = 0;
-long timerCurrentCheck = 20000;               // How long to wait before making decision whether current is below threshold or not
-float currentThreshold = 2.65;   //2.65
-boolean stateLowCurrent;
+long timerCurrentCheck = 20000; // How long to wait before making decision whether current is below threshold or not
+float currentThreshold = 2.65;  //2.65
+bool stateLowCurrent;
 float Irms;
 
 int countCurrentCheck = 0;
 
 // Pump state variables
-boolean statePump;
-boolean oldstatePump;
-boolean stateSolenoidValve;
-boolean oldstateSolenoidValve;
-boolean stateTopUp;
-boolean oldstateTopUp;
+bool statePump;
+bool oldstatePump;
+bool stateSolenoidValve;
+bool oldstateSolenoidValve;
+bool stateTopUp;
+bool oldstateTopUp;
 
 //Pressure Monitoring Variables
 float pressureHead;
 float instantaneous_pressureHead;
 float sumpressureHead = 0.0;
-boolean stateLowPressureHead;
-boolean oldstateLowPressureHead;
-float lowerPressureHeadThreshold = 0.5;       // Default: 2.0; in meter head unit
-float upperPressureHeadThreshold = 4.0;       // Default: 4.0; in meter head unit
-float noPressureHeadThreshold = 0.05;          // Default: 0.1; in meter head unit
+bool stateLowPressureHead;
+bool oldstateLowPressureHead;
+float lowerPressureHeadThreshold = 0.5; // Default: 2.0; in meter head unit
+float upperPressureHeadThreshold = 4.0; // Default: 4.0; in meter head unit
+float noPressureHeadThreshold = 0.05;   // Default: 0.1; in meter head unit
 long startTimerLowPressureHead = 0;
-long timerLowPressureHead = 15000;             // Default: 15000; 15s; How long to wait before making decision to whther low pressure state really occur or not
-long timerTopUpLowPressureHead = 15000;       // Default: 15000; 15s; How long valve should open for topping up while low pressure state occur
+long timerLowPressureHead = 15000;      // Default: 15000; 15s; How long to wait before making decision to whther low pressure state really occur or not
+long timerTopUpLowPressureHead = 15000; // Default: 15000; 15s; How long valve should open for topping up while low pressure state occur
 int countTopUp = 0;
 
-
 //Error state
-boolean stateError;   // General error state
-boolean stateError1;  // Head below minimum threshold
-boolean stateError2;  // Head still low after top-up
-boolean stateError3;  // Motor current too low
-boolean old_stateError;
-boolean old_stateError1;
-boolean old_stateError2;
-boolean old_stateError3;
+bool stateError;  // General error state
+bool stateError1; // Head below minimum threshold
+bool stateError2; // Head still low after top-up
+bool stateError3; // Motor current too low
+bool old_stateError;
+bool old_stateError1;
+bool old_stateError2;
+bool old_stateError3;
 
 //Solenoid valve variables
-long timerSolenoidValveON = 15000;            // Default: 15s; How long valve should open for topping up while low motor current state occur
-long timerSolenoidValveOFF = 3000;            // Default: 3s; How long valve should close when topping up while low motor current state occur
+long timerSolenoidValveON = 15000; // Default: 15s; How long valve should open for topping up while low motor current state occur
+long timerSolenoidValveOFF = 3000; // Default: 3s; How long valve should close when topping up while low motor current state occur
 unsigned long previousMillisSolenoidValve;
 
 //Buzzer variables
 unsigned long previousMillisBuzzer;
-boolean stateBuzzer;
+bool stateBuzzer;
 
 //Thingspeak variables
 unsigned long previousMillisThingspeak;
@@ -130,15 +123,14 @@ unsigned long previousMillisThingspeak;
 //Timer & counter variables
 static uint32_t timer2;
 static uint32_t timer3;
-static uint32_t timer4;     // averaging sum pressure head
-static uint32_t timer5;     // timer for Manual Switch ON triggered by Mqtt message
-static uint32_t timer6;     // timer for ON-OFF status LED when Manual Mode activated
-static uint32_t timer9;     // timer for ERROR (count down before resetting)
+static uint32_t timer4; // averaging sum pressure head
+static uint32_t timer5; // timer for Manual Switch ON triggered by Mqtt message
+static uint32_t timer6; // timer for ON-OFF status LED when Manual Mode activated
+static uint32_t timer9; // timer for ERROR (count down before resetting)
 
-static uint32_t last;       // timer for setting sync interval NTP time
+static uint32_t last; // timer for setting sync interval NTP time
 
 int count0;
-
 
 //TOGGLE_SWITCH CLASS
 toggleSwitch toggleSwitch_pinSwitchManualMode(pinSwitchManualMode, onDelaySwitchManualMode, offDelaySwitchManualMode);
@@ -147,8 +139,6 @@ toggleSwitch toggleSwitch_pinLevelSwitch(pinLevelSwitch, onDelayLevelSwitch, off
 //BUTTON_SWITCH CLASS
 buttonSwitch buttonSwitch_pinSwitchPump(pinSwitchPump);
 buttonSwitch buttonSwitch_pinSwitchSolenoidValve(pinSwitchSolenoidValve);
-
-
 
 //----------------------AC CURRENT VARIABLES-------------//
 
@@ -176,48 +166,54 @@ ELClientMqtt mqtt(&esp);
 // Callback made from esp-link to notify of wifi status changes
 // Here we just print something out for grins
 
-//boolean wifiConnected = false;
+//bool wifiConnected = false;
 uint8_t wifiStatus;
 uint8_t wifiStatus_old;
 
-void wifiCb(void *response) {
-  ELClientResponse *res = (ELClientResponse*)response;
-  if (res->argc() == 1) {
+void wifiCb(void *response)
+{
+  ELClientResponse *res = (ELClientResponse *)response;
+  if (res->argc() == 1)
+  {
     //uint8_t status;
     res->popArg(&wifiStatus, 1);
 
-    if (wifiStatus != wifiStatus_old) {
+    if (wifiStatus != wifiStatus_old)
+    {
 
       wifiStatus_old = wifiStatus;
 
       digitalClockDisplay();
 
-      if (wifiStatus == 0) {
+      if (wifiStatus == 0)
+      {
         Serial.println(F("STATION_IDLE"));
       }
-      else if (wifiStatus == STATION_GOT_IP) {
+      else if (wifiStatus == STATION_GOT_IP)
+      {
         Serial.println(F("STATION_GOT_IP"));
       }
-      else if (wifiStatus == STATION_CONNECTING) {
+      else if (wifiStatus == STATION_CONNECTING)
+      {
         Serial.println(F("STATION_CONNECTING"));
       }
-      else if (wifiStatus == STATION_WRONG_PASSWORD) {
+      else if (wifiStatus == STATION_WRONG_PASSWORD)
+      {
         Serial.println(F("STATION_WRONG_PASSWORD"));
       }
-      else if (wifiStatus == STATION_NO_AP_FOUND) {
+      else if (wifiStatus == STATION_NO_AP_FOUND)
+      {
         Serial.println(F("STATION_NO_AP_FOUND"));
       }
-      else if (wifiStatus == STATION_CONNECT_FAIL) {
+      else if (wifiStatus == STATION_CONNECT_FAIL)
+      {
         Serial.println(F("STATION_CONNECT_FAIL"));
       }
     }
   }
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////////////
-
 
 bool mqttconnected;
 
@@ -225,9 +221,9 @@ bool mqttconnected;
   // MQTT Connected
 ********************/
 
-
 // Callback when MQTT is connected
-void mqttConnected(void* response) {
+void mqttConnected(void *response)
+{
   digitalClockDisplay();
   Serial.println(F("MQTT CONNECTED"));
   //mqtt.subscribe("/esp-link/1");
@@ -243,29 +239,28 @@ void mqttConnected(void* response) {
   mqttconnected = true;
 }
 
-
 /*******************
   // MQTT Disconnected
 ********************/
 
 // Callback when MQTT is disconnected
-void mqttDisconnected(void* response) {
+void mqttDisconnected(void *response)
+{
   digitalClockDisplay();
   Serial.println(F("MQTT DISCONNECTED"));
   mqttconnected = false;
 }
 
-
 /*******************
   // MQTT Data
 ********************/
 
-boolean MQTTstateSwitchManualMode;
-boolean MQTTstateSwitchPump;
-boolean MQTTstateSwitchSolenoidValve;
-boolean MQTTstateLevelSwitch;
+bool MQTTstateSwitchManualMode;
+bool MQTTstateSwitchPump;
+bool MQTTstateSwitchSolenoidValve;
+bool MQTTstateLevelSwitch;
 
-void mqttData(void* response)
+void mqttData(void *response)
 {
   ELClientResponse *res = (ELClientResponse *)response;
 
@@ -291,41 +286,55 @@ void mqttData(void* response)
   char TOPIC_BUF[64];
   char PAYLOAD_BUF[16];
 
-  for (int i = 0; i < numRECEIVE_TOPIC_TABLE; i++) {
+  for (int i = 0; i < numRECEIVE_TOPIC_TABLE; i++)
+  {
     memset(TOPIC_BUF, 0, sizeof TOPIC_BUF);
-    strcpy_P(TOPIC_BUF, (char*)pgm_read_word(&(RECEIVE_TOPIC_TABLE[i]))); // Necessary casts and dereferencing, just copy.
+    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(RECEIVE_TOPIC_TABLE[i]))); // Necessary casts and dereferencing, just copy.
 
-    if (topic == TOPIC_BUF) {
-      for (int k = 0; k < numRECEIVE_PAYLOAD_TABLE; k++) {
+    if (topic == TOPIC_BUF)
+    {
+      for (int k = 0; k < numRECEIVE_PAYLOAD_TABLE; k++)
+      {
         memset(PAYLOAD_BUF, 0, sizeof PAYLOAD_BUF);
-        strcpy_P(PAYLOAD_BUF, (char*)pgm_read_word(&(RECEIVE_PAYLOAD_TABLE[k])));
-        if (data == PAYLOAD_BUF) {
-          if (k == 0 || k == 1) {
-            if (i == 0) {
+        strcpy_P(PAYLOAD_BUF, (char *)pgm_read_word(&(RECEIVE_PAYLOAD_TABLE[k])));
+        if (data == PAYLOAD_BUF)
+        {
+          if (k == 0 || k == 1)
+          {
+            if (i == 0)
+            {
               MQTTstateSwitchManualMode = LOW;
             }
-            else if (i == 1) {
+            else if (i == 1)
+            {
               MQTTstateSwitchPump = LOW;
             }
-            else if (i == 2) {
+            else if (i == 2)
+            {
               MQTTstateSwitchSolenoidValve = LOW;
             }
-            else if (i == 3) {
+            else if (i == 3)
+            {
               MQTTstateLevelSwitch = LOW;
             }
             return;
           }
-          else if (k == 2 || k == 3) {
-            if (i == 0) {
+          else if (k == 2 || k == 3)
+          {
+            if (i == 0)
+            {
               MQTTstateSwitchManualMode = HIGH;
             }
-            else if (i == 1) {
+            else if (i == 1)
+            {
               MQTTstateSwitchPump = HIGH;
             }
-            else if (i == 2) {
+            else if (i == 2)
+            {
               MQTTstateSwitchSolenoidValve = HIGH;
             }
-            else if (i == 3) {
+            else if (i == 3)
+            {
               MQTTstateLevelSwitch = HIGH;
             }
             return;
@@ -336,36 +345,32 @@ void mqttData(void* response)
       return;
     }
   }
-
 }
-
 
 /*******************
   // MQTT Published
 ********************/
 
-
-void mqttPublished(void* response) {
+void mqttPublished(void *response)
+{
   Serial.println(F("MQTT published"));
 }
 
-
-
-
-
 ////////////////////////////////////////////////
-
 
 // Callback made form esp-link to notify that it has just come out of a reset. This means we
 // need to initialize it!
-void resetCb(void) {
+void resetCb(void)
+{
   digitalClockDisplay();
 
   Serial.println(F("EL-Client (re-)starting!"));
   bool ok;
-  do {
-    ok = esp.Sync();      // sync up with esp-link, blocks for up to 2 seconds
-    if (!ok) {
+  do
+  {
+    ok = esp.Sync(); // sync up with esp-link, blocks for up to 2 seconds
+    if (!ok)
+    {
       digitalClockDisplay();
       Serial.print(F("\nEL-Client sync failed! err: "));
       Serial.println(ok);
@@ -377,33 +382,31 @@ void resetCb(void) {
   webServer.setup();
 }
 
-
 time_t prevDisplay = 0; // when the digital clock was displayed
 byte old_TIMESTATUS = timeSet;
 
-
-
-void setup() {
+void setup()
+{
 
   Serial.begin(57600);
 
   // ------ PIN MODE
-  pinMode (pinSwitchManualMode, INPUT_PULLUP);
-  pinMode (pinSwitchPump, INPUT_PULLUP);
-  pinMode (pinSwitchSolenoidValve, INPUT_PULLUP);
-  pinMode (pinLevelSwitch, INPUT_PULLUP);
+  pinMode(pinSwitchManualMode, INPUT_PULLUP);
+  pinMode(pinSwitchPump, INPUT_PULLUP);
+  pinMode(pinSwitchSolenoidValve, INPUT_PULLUP);
+  pinMode(pinLevelSwitch, INPUT_PULLUP);
   //pinMode (pinCurrentSense, OUTPUT);
   pinMode(pinLedPower, OUTPUT);
-  pinMode (pinPump, OUTPUT);
-  pinMode (pinSolenoidValve, OUTPUT);
-  pinMode (pinLedLevelSwitch, OUTPUT);
-  pinMode (pinBuzzer, OUTPUT);
-  pinMode (pinTest, OUTPUT);
+  pinMode(pinPump, OUTPUT);
+  pinMode(pinSolenoidValve, OUTPUT);
+  pinMode(pinLedLevelSwitch, OUTPUT);
+  pinMode(pinBuzzer, OUTPUT);
+  pinMode(pinTest, OUTPUT);
 
   // ------ Initial state for all relays, LED & Buzzer when startup
   digitalWrite(pinPump, LOW);
   digitalWrite(pinSolenoidValve, LOW);
-  digitalWrite (pinBuzzer, HIGH);
+  digitalWrite(pinBuzzer, HIGH);
   digitalWrite(pinLedPower, HIGH);
   digitalWrite(pinTest, LOW);
 
@@ -425,7 +428,6 @@ void setup() {
   mqtt.dataCb.attach(mqttData);
   mqtt.setup();
 
-
   //Serial.println("ARDUINO: setup mqtt lwt");
   // void lwt(const char* topic, const char* message, uint8_t qos=0, uint8_t retain=0);
   mqtt.lwt(F("mainpump/mqttstatus"), F("DISCONNECTED"), 2, 1); //or mqtt.lwt("/lwt", "offline");
@@ -436,53 +438,60 @@ void setup() {
   // reset manual Mode switch state at MQTT broker
   MqttStateSwitchManualMode();
 
-
   // Take initial pressure Head reading
   pressureHead = measurePressureFAST();
 
   // Initial time sync
   //setSyncProvider(requestSync);  //set function to call when sync required
   //setSyncInterval(20); //in seconds
-
 }
-
 
 byte TIMESTATUS;
 
-void loop() {
+void loop()
+{
 
   //char response[BUF_LEN];
   esp.Process();
 
-  if (now() != prevDisplay) { //update the display only if time has changed
+  if (now() != prevDisplay)
+  { //update the display only if time has changed
 
     prevDisplay = now();
 
-    if (wifiStatus == STATION_GOT_IP) {
+    if (wifiStatus == STATION_GOT_IP)
+    {
 
       //TIMESTATUS = timeStatus();
 
       unsigned long syncInterval;
 
-      if (TIMESTATUS == timeNotSet) {
+      if (TIMESTATUS == timeNotSet)
+      {
         syncInterval = 5000; // 5 seconds
       }
-      else if (TIMESTATUS == timeNeedsSync) {
+      else if (TIMESTATUS == timeNeedsSync)
+      {
         syncInterval = 300000; // 5 minutes
       }
-      else if (TIMESTATUS == timeSet) {
+      else if (TIMESTATUS == timeSet)
+      {
         syncInterval = 18000000; // 5 hours
       }
 
-      if ((millis() - last) > syncInterval) {
+      if ((millis() - last) > syncInterval)
+      {
 
         last = millis();
 
-        if (requestSync() > 0) {
+        if (requestSync() > 0)
+        {
           TIMESTATUS = timeSet;
         }
-        else {
-          if (TIMESTATUS == timeSet) {
+        else
+        {
+          if (TIMESTATUS == timeSet)
+          {
             TIMESTATUS = timeNeedsSync;
           }
         }
@@ -490,13 +499,12 @@ void loop() {
     }
   }
 
-
-  if (mqttconnected && (millis() - previousMillisThingspeak) > 16000) {
+  if (mqttconnected && (millis() - previousMillisThingspeak) > 16000)
+  {
 
     previousMillisThingspeak = millis();
     //previousMillisThingspeak2 = millis();
     //char response[BUF_LEN];
-
 
     MqttStateLevelSwitch();
     MqttStateSwitchManualMode();
@@ -515,30 +523,27 @@ void loop() {
     // this must be send on the last. Used by mqttwarn to to triggers send data to thingspeak.
     MqttCONNECTED();
 
-
     //uint32_t t = cmd.GetTime();
     //Serial.print("Time: ");
     //Serial.println(t);
-
   }
-
-
-
-
 
   /*------------- START processing Pressure Head --------------*/
 
   //instantaneous_pressureHead = measurePressure();
 
-  if (millis() - timer4 < 1000) {
-    if (count0 == 0) {
+  if (millis() - timer4 < 1000)
+  {
+    if (count0 == 0)
+    {
       sumpressureHead = 0.00;
     }
     instantaneous_pressureHead = measurePressureFAST();
     sumpressureHead += instantaneous_pressureHead;
     count0++;
   }
-  else if (millis() - timer4 >= 1000) {
+  else if (millis() - timer4 >= 1000)
+  {
 
     timer4 = millis();
     pressureHead = sumpressureHead / count0;
@@ -548,8 +553,11 @@ void loop() {
     pressureHead = atof(buf);
     //reset counter
     count0 = 0;
-
   }
+
+  // ****************************
+  // PRESSURE_SENSOR_INSTALLED
+  // ****************************
 
   bool PRESSURE_SENSOR_INSTALLED = false;
 
@@ -557,31 +565,42 @@ void loop() {
   {
     pressureHead = 10.0;
 
-    static unsigned long timeLedChanged = millis();
-    static unsigned long period = 0;
-    static boolean ledOn = false;
-
-
-    const byte pin = pinPump;
-    const int periods[] = {3600000, 3000};
-
-    if (millis() - timeLedChanged >= period)
+    bool enable = true;
+    if (enable)
     {
-      timeLedChanged = millis();
-      
-      if (ledOn == true)
+      static uint32_t timeLedChanged = millis();
+      static uint32_t period = 0;
+      static bool ledOn = false;
+
+      const uint8_t pin = pinPump;
+      uint32_t offPeriod = 3600000; // default=3600000 ; i.e 1 hour
+      uint32_t onPeriod = 1500;     // default=2000 ; i.e 2 seconds
+      const uint32_t periods[] = {offPeriod, onPeriod};
+
+      if (millis() - timeLedChanged >= period)
       {
-        ledOn = false;
-        digitalWrite(pin, ledOn);
-        period = periods[ledOn];
-        statePump = ledOn;
-      }
-      else
-      {
-        ledOn = true;
-        digitalWrite(pin, ledOn);
-        period = periods[ledOn];
-        statePump = ledOn;
+        timeLedChanged = millis();
+
+        if (ledOn == true)
+        {
+          ledOn = false;
+          // digitalWrite(pin, ledOn);
+          period = periods[ledOn];
+          statePump = ledOn;
+          // MQTTstateSwitchManualMode = ledOn;
+          // MQTTstateSwitchPump = ledOn;
+          Serial.println(F("Manual fill OFF"));
+        }
+        else
+        {
+          ledOn = true;
+          // digitalWrite(pin, ledOn);
+          period = periods[ledOn];
+          statePump = ledOn;
+          // MQTTstateSwitchManualMode = ledOn;
+          // MQTTstateSwitchPump = ledOn;
+          Serial.println(F("Manual fill ON"));
+        }
       }
     }
   }
@@ -597,10 +616,7 @@ void loop() {
     oldStateLowPressureHead = stateLowPressureHead;
   */
 
-
   /*------------- END processing Pressure Head --------------*/
-
-
 
   /*------------- START processing AC Current --------------*/
 
@@ -608,7 +624,6 @@ void loop() {
 
   //stateSwitchManualMode = !digitalRead(pinSwitchManualMode);
   //stateLevelSwitch = !digitalRead(pinLevelSwitch);
-
 
   //--- Checking the state of all PHYSICAL/MECHANICAL TOGGLE SWITCHES
   /*
@@ -635,55 +650,54 @@ void loop() {
     }
   */
 
-  if (MQTTstateSwitchManualMode == HIGH) {
+  if (MQTTstateSwitchManualMode == HIGH)
+  {
 
     stateSwitchManualMode = MQTTstateSwitchManualMode;
 
     /*---- Turn off Manual Switch after 30 minutes ---*/
-    if (millis() - timer5 > 1800000) {
+    if (millis() - timer5 > 1800000)
+    {
       MQTTstateSwitchManualMode = LOW;
     }
   }
-  if (MQTTstateSwitchManualMode == LOW) {
-    stateSwitchManualMode =  toggleSwitch_pinSwitchManualMode.Update();
+  if (MQTTstateSwitchManualMode == LOW)
+  {
+    stateSwitchManualMode = toggleSwitch_pinSwitchManualMode.Update();
     timer5 = millis();
   }
 
-
-
-
-  if (MQTTstateLevelSwitch == HIGH) {
+  if (MQTTstateLevelSwitch == HIGH)
+  {
     stateLevelSwitch = MQTTstateLevelSwitch;
   }
-  else if (MQTTstateLevelSwitch == LOW) {
+  else if (MQTTstateLevelSwitch == LOW)
+  {
     stateLevelSwitch = toggleSwitch_pinLevelSwitch.Update();
     //toggleSwitch_pinLevelSwitch.Update;
   }
 
-
-
-
-
   ///*
-
-
 
   // Check if any of the states below has been updated
   // - Manual Mode Switch
   // - Level Switch
 
-  if (stateSwitchManualMode != oldStateSwitchManualMode) {
+  if (stateSwitchManualMode != oldStateSwitchManualMode)
+  {
 
     //Update the state of Manual Mode Switch
     oldStateSwitchManualMode = stateSwitchManualMode;
 
-    if (stateSwitchManualMode == LOW) {
+    if (stateSwitchManualMode == LOW)
+    {
       digitalClockDisplay();
-      Serial.println(F("AUTOMATIC MODE ACTIVATED"));
+      Serial.println(F("Mode changed to AUTOMATIC"));
     }
-    else if (stateSwitchManualMode == HIGH) {
+    else if (stateSwitchManualMode == HIGH)
+    {
       digitalClockDisplay();
-      Serial.println(F("MANUAL MODE ACTIVATED"));
+      Serial.println(F("Mode changed to MANUAL"));
       //timer5 = millis();
     }
 
@@ -691,17 +705,19 @@ void loop() {
     RESET_ALL();
   }
 
-
-  if (stateLevelSwitch != oldStateLevelSwitch) {
+  if (stateLevelSwitch != oldStateLevelSwitch)
+  {
 
     // Update the state of Level Switch
     oldStateLevelSwitch = stateLevelSwitch;
 
-    if (stateLevelSwitch == LOW) {
+    if (stateLevelSwitch == LOW)
+    {
       digitalClockDisplay();
       Serial.println(F("Level Switch OFF"));
     }
-    else if (stateLevelSwitch == HIGH) {
+    else if (stateLevelSwitch == HIGH)
+    {
       digitalClockDisplay();
       Serial.println(F("Level Switch ON"));
     }
@@ -710,374 +726,423 @@ void loop() {
     RESET_ALL();
   }
 
-  oldStateSwitchManualMode = stateSwitchManualMode;                                   // Update the state of Manual Mode Switch
-  oldStateLevelSwitch = stateLevelSwitch;                                   // Update the state of Level Switch
-
-
-
-
+  oldStateSwitchManualMode = stateSwitchManualMode; // Update the state of Manual Mode Switch
+  oldStateLevelSwitch = stateLevelSwitch;           // Update the state of Level Switch
 
   // Update the state of SolenoidValve (manual) switch
   //*/
 
-
   /*-------------------- MANUAL MODE ON / ACTIVATED -------------------------*/
 
-  switch (MQTTstateSwitchManualMode) {
-    case HIGH:
+  switch (MQTTstateSwitchManualMode)
+  {
+  case HIGH:
 
-      if (statePump == LOW && stateSolenoidValve == LOW) {
+    if (statePump == LOW && stateSolenoidValve == LOW)
+    {
 
-        stateSwitchPump = MQTTstateSwitchPump;
-        stateSwitchSolenoidValve = MQTTstateSwitchSolenoidValve;
+      stateSwitchPump = MQTTstateSwitchPump;
+      stateSwitchSolenoidValve = MQTTstateSwitchSolenoidValve;
 
-        if (stateSwitchPump != oldStateSwitchPump && stateSwitchPump == HIGH) {
-          statePump = HIGH;
-          oldStateSwitchPump = HIGH;
+      if (stateSwitchPump != oldStateSwitchPump && stateSwitchPump == HIGH)
+      {
+        statePump = HIGH;
+        oldStateSwitchPump = HIGH;
 
-          // update switch Pump logical state to Mqtt broker
-          MqttStateSwitchPump();
-        }
-        else if (stateSwitchSolenoidValve != oldStateSwitchSolenoidValve && stateSwitchSolenoidValve == HIGH) {
-          stateSolenoidValve = HIGH;
-          oldStateSwitchSolenoidValve = HIGH;
-
-          // update switch Solenoid Valve logical state to Mqtt broker
-          MqttStateSwitchSolenoidValve();
-        }
+        // update switch Pump logical state to Mqtt broker
+        MqttStateSwitchPump();
       }
+      else if (stateSwitchSolenoidValve != oldStateSwitchSolenoidValve && stateSwitchSolenoidValve == HIGH)
+      {
+        stateSolenoidValve = HIGH;
+        oldStateSwitchSolenoidValve = HIGH;
 
-      else if (statePump == HIGH && stateSolenoidValve == LOW) {
-
-        stateSwitchPump = MQTTstateSwitchPump;
-        stateSwitchSolenoidValve = LOW;
-
-        if (stateSwitchPump != oldStateSwitchPump && stateSwitchPump == LOW) {
-          statePump = LOW;
-          oldStateSwitchPump = LOW;
-
-          // update switch Pump logical state to Mqtt broker
-          MqttStateSwitchPump();
-        }
-        if (MQTTstateSwitchSolenoidValve == HIGH) {
-          MQTTstateSwitchSolenoidValve = LOW;
-          MqttStateSwitchSolenoidValve();
-        }
+        // update switch Solenoid Valve logical state to Mqtt broker
+        MqttStateSwitchSolenoidValve();
       }
+    }
 
-      else if (statePump == LOW && stateSolenoidValve == HIGH) {
+    else if (statePump == HIGH && stateSolenoidValve == LOW)
+    {
 
-        stateSwitchSolenoidValve = MQTTstateSwitchSolenoidValve;
-        stateSwitchPump != LOW;
+      stateSwitchPump = MQTTstateSwitchPump;
+      stateSwitchSolenoidValve = LOW;
 
-        if (stateSwitchSolenoidValve != oldStateSwitchSolenoidValve && stateSwitchSolenoidValve == LOW) {
-          stateSolenoidValve = LOW;
-          oldStateSwitchSolenoidValve = LOW;
+      if (stateSwitchPump != oldStateSwitchPump && stateSwitchPump == LOW)
+      {
+        statePump = LOW;
+        oldStateSwitchPump = LOW;
 
-          // update switch Solenoid Valve logical state to Mqtt broker
-          MqttStateSwitchSolenoidValve();
-        }
-        if (MQTTstateSwitchPump == HIGH) {
-          MQTTstateSwitchPump = LOW;
-          MqttStateSwitchPump();
-        }
+        // update switch Pump logical state to Mqtt broker
+        MqttStateSwitchPump();
       }
+      if (MQTTstateSwitchSolenoidValve == HIGH)
+      {
+        MQTTstateSwitchSolenoidValve = LOW;
+        MqttStateSwitchSolenoidValve();
+      }
+    }
 
+    else if (statePump == LOW && stateSolenoidValve == HIGH)
+    {
 
-      break;
+      stateSwitchSolenoidValve = MQTTstateSwitchSolenoidValve;
+      stateSwitchPump != LOW;
 
+      if (stateSwitchSolenoidValve != oldStateSwitchSolenoidValve && stateSwitchSolenoidValve == LOW)
+      {
+        stateSolenoidValve = LOW;
+        oldStateSwitchSolenoidValve = LOW;
+
+        // update switch Solenoid Valve logical state to Mqtt broker
+        MqttStateSwitchSolenoidValve();
+      }
+      if (MQTTstateSwitchPump == HIGH)
+      {
+        MQTTstateSwitchPump = LOW;
+        MqttStateSwitchPump();
+      }
+    }
+
+    break;
 
     /*-------------------- AUTOMATIC MODE ACTIVATED -------------------------*/
 
+  case LOW:
 
-    case LOW:
-
-      if (stateError == LOW)
+    if (stateError == LOW)
+    {
+      if (MQTTstateSwitchPump == HIGH || MQTTstateSwitchSolenoidValve == HIGH)
       {
-        if (MQTTstateSwitchPump == HIGH || MQTTstateSwitchSolenoidValve == HIGH) {
-          MQTTstateSwitchPump = LOW;
-          MQTTstateSwitchSolenoidValve = LOW;
+        MQTTstateSwitchPump = LOW;
+        MQTTstateSwitchSolenoidValve = LOW;
 
-          MqttStateSwitchPump();
-          MqttStateSwitchSolenoidValve();
-        }
+        MqttStateSwitchPump();
+        MqttStateSwitchSolenoidValve();
+      }
 
-        if (stateSwitchManualMode == HIGH) {
+      if (stateSwitchManualMode == HIGH)
+      {
 
-          if (statePump == LOW && stateSolenoidValve == LOW) {
+        if (statePump == LOW && stateSolenoidValve == LOW)
+        {
 
-            stateSwitchPump = buttonSwitch_pinSwitchPump.Update();
-            stateSwitchSolenoidValve = buttonSwitch_pinSwitchSolenoidValve.Update();
+          stateSwitchPump = buttonSwitch_pinSwitchPump.Update();
+          stateSwitchSolenoidValve = buttonSwitch_pinSwitchSolenoidValve.Update();
 
-            if (stateSwitchPump != oldStateSwitchPump && stateSwitchPump == HIGH) {
-              statePump = HIGH;
-              oldStateSwitchPump = HIGH;
+          if (stateSwitchPump != oldStateSwitchPump && stateSwitchPump == HIGH)
+          {
+            statePump = HIGH;
+            oldStateSwitchPump = HIGH;
 
-              // update switch Pump logical state to Mqtt broker
-              MqttStateSwitchPump();
-            }
-            else if (stateSwitchSolenoidValve != oldStateSwitchSolenoidValve && stateSwitchSolenoidValve == HIGH) {
-              stateSolenoidValve = HIGH;
-              oldStateSwitchSolenoidValve = HIGH;
-
-              // update switch Solenoid Valve logical state to Mqtt broker
-              MqttStateSwitchSolenoidValve();
-            }
+            // update switch Pump logical state to Mqtt broker
+            MqttStateSwitchPump();
           }
+          else if (stateSwitchSolenoidValve != oldStateSwitchSolenoidValve && stateSwitchSolenoidValve == HIGH)
+          {
+            stateSolenoidValve = HIGH;
+            oldStateSwitchSolenoidValve = HIGH;
 
-          else if (statePump == HIGH && stateSolenoidValve == LOW) {
-
-            stateSwitchPump = buttonSwitch_pinSwitchPump.Update();
-
-            if (stateSwitchPump != oldStateSwitchPump && stateSwitchPump == LOW) {
-              statePump = LOW;
-              oldStateSwitchPump = LOW;
-
-              // update switch Pump logical state to Mqtt broker
-              MqttStateSwitchPump();
-            }
-          }
-
-          else if (statePump == LOW && stateSolenoidValve == HIGH) {
-
-            stateSwitchSolenoidValve = buttonSwitch_pinSwitchSolenoidValve.Update();
-
-            if (stateSwitchSolenoidValve != oldStateSwitchSolenoidValve && stateSwitchSolenoidValve == LOW) {
-              stateSolenoidValve = LOW;
-              oldStateSwitchSolenoidValve = LOW;
-
-              // update switch Solenoid Valve logical state to Mqtt broker
-              MqttStateSwitchSolenoidValve();
-            }
+            // update switch Solenoid Valve logical state to Mqtt broker
+            MqttStateSwitchSolenoidValve();
           }
         }
 
-        else if (stateSwitchManualMode == LOW) {
+        else if (statePump == HIGH && stateSolenoidValve == LOW)
+        {
 
-          if (stateLevelSwitch == LOW) {
+          stateSwitchPump = buttonSwitch_pinSwitchPump.Update();
 
-            if (pressureHead <= lowerPressureHeadThreshold && stateLowPressureHead == LOW) {
+          if (stateSwitchPump != oldStateSwitchPump && stateSwitchPump == LOW)
+          {
+            statePump = LOW;
+            oldStateSwitchPump = LOW;
 
-              stateLowPressureHead = HIGH;
+            // update switch Pump logical state to Mqtt broker
+            MqttStateSwitchPump();
+          }
+        }
+
+        else if (statePump == LOW && stateSolenoidValve == HIGH)
+        {
+
+          stateSwitchSolenoidValve = buttonSwitch_pinSwitchSolenoidValve.Update();
+
+          if (stateSwitchSolenoidValve != oldStateSwitchSolenoidValve && stateSwitchSolenoidValve == LOW)
+          {
+            stateSolenoidValve = LOW;
+            oldStateSwitchSolenoidValve = LOW;
+
+            // update switch Solenoid Valve logical state to Mqtt broker
+            MqttStateSwitchSolenoidValve();
+          }
+        }
+      }
+
+      else if (stateSwitchManualMode == LOW)
+      {
+
+        if (stateLevelSwitch == LOW)
+        {
+
+          if (pressureHead <= lowerPressureHeadThreshold && stateLowPressureHead == LOW)
+          {
+
+            stateLowPressureHead = HIGH;
+          }
+
+          if (stateLowPressureHead == LOW && stateLowPressureHead != oldstateLowPressureHead)
+          {
+            //Serial.println("Pressure head return to normal");
+          }
+          if (stateLowPressureHead == HIGH && stateLowPressureHead != oldstateLowPressureHead)
+          {
+            //Serial.println("Static head low, waiting to making sure...");
+            startTimerLowPressureHead = millis();
+          }
+          oldstateLowPressureHead = stateLowPressureHead;
+
+          if (stateLowPressureHead == HIGH && millis() - startTimerLowPressureHead <= timerLowPressureHead)
+          {
+            if (pressureHead > lowerPressureHeadThreshold)
+            {
+              stateLowPressureHead = LOW;
             }
+          }
+          else if (stateLowPressureHead == HIGH && millis() - startTimerLowPressureHead > timerLowPressureHead)
+          {
 
-            if (stateLowPressureHead == LOW && stateLowPressureHead != oldstateLowPressureHead) {
-              //Serial.println("Pressure head return to normal");
-            }
-            if (stateLowPressureHead == HIGH && stateLowPressureHead != oldstateLowPressureHead) {
-              //Serial.println("Static head low, waiting to making sure...");
-              startTimerLowPressureHead = millis();
-            }
-            oldstateLowPressureHead = stateLowPressureHead;
+            if (pressureHead < noPressureHeadThreshold)
+            {
 
-            if (stateLowPressureHead == HIGH && millis() - startTimerLowPressureHead <= timerLowPressureHead) {
-              if (pressureHead > lowerPressureHeadThreshold) {
-                stateLowPressureHead = LOW;
-              }
-            }
-            else if (stateLowPressureHead == HIGH && millis() - startTimerLowPressureHead > timerLowPressureHead) {
-
-              if (pressureHead < noPressureHeadThreshold) {
-
-                //edit: pressure below noPressureHeadThreshold will not cause Error.
-                //Instead, the system will try to fill the water first.
-                /*
+              //edit: pressure below noPressureHeadThreshold will not cause Error.
+              //Instead, the system will try to fill the water first.
+              /*
                   stateError = HIGH;
                   stateError1 = HIGH;
                   MqttStateError1();
                   Serial.println("Head below minimum threshold!!");
                 */
 
-                stateTopUp = HIGH;
-
-              }
-              else if (noPressureHeadThreshold <= pressureHead && pressureHead <= lowerPressureHeadThreshold) {
-                stateTopUp = HIGH;
-              }
+              stateTopUp = HIGH;
             }
-
-            if (stateTopUp == HIGH && stateTopUp != oldstateTopUp) {
-
-              previousMillisSolenoidValve = millis();
-
+            else if (noPressureHeadThreshold <= pressureHead && pressureHead <= lowerPressureHeadThreshold)
+            {
+              stateTopUp = HIGH;
             }
-            oldstateTopUp = stateTopUp;
-
-            if (stateTopUp == HIGH && stateSolenoidValve == HIGH) {
-
-              if (pressureHead > lowerPressureHeadThreshold) {
-
-                stateLowPressureHead = LOW;
-
-                countTopUp = 0;
-
-                stateTopUp = LOW;
-              }
-            }
-
-            if (stateTopUp == HIGH && stateSolenoidValve == HIGH && millis() - previousMillisSolenoidValve >= timerTopUpLowPressureHead) {
-
-              countTopUp = countTopUp + 1;
-
-              if (pressureHead <= lowerPressureHeadThreshold) {
-
-                if (countTopUp < 3) {
-
-                  // countTopUp = countTopUp + 1;
-
-                  stateLowPressureHead = LOW;
-                  startTimerLowPressureHead = millis();
-                  MqttCountTopUp();
-
-                  Serial.println(F("Head still low after top up, retrying...."));
-
-                }
-
-                else if (countTopUp >= 3) {
-                  stateError = HIGH;
-                  stateError2 = HIGH;
-                  MqttStateError2();
-                  Serial.println(F("Head still low after 3X top up, I give up..."));
-                }
-
-              }
-
-              else if (pressureHead > lowerPressureHeadThreshold) {
-
-                stateLowPressureHead = LOW;
-
-                countTopUp = 0;
-
-              }
-
-              stateTopUp = LOW;
-
-            }
-
-            stateSolenoidValve = stateTopUp;
           }
 
-          else if (stateLevelSwitch == HIGH) {
+          if (stateTopUp == HIGH && stateTopUp != oldstateTopUp)
+          {
 
-            if (statePump == LOW && stateSolenoidValve == LOW && stateTopUp == LOW) {
-              if (millis() - startDelayPumpON >= onDelayPumpON) {
-                statePump = HIGH;
-                startTimerCurrentCheck = millis();
-              }
+            previousMillisSolenoidValve = millis();
+          }
+          oldstateTopUp = stateTopUp;
+
+          if (stateTopUp == HIGH && stateSolenoidValve == HIGH)
+          {
+
+            if (pressureHead > lowerPressureHeadThreshold)
+            {
+
+              stateLowPressureHead = LOW;
+
+              countTopUp = 0;
+
+              stateTopUp = LOW;
             }
+          }
 
-            if (statePump == HIGH && (countCurrentCheck == 0 || stateLowCurrent == HIGH) && millis() - startTimerCurrentCheck >= timerCurrentCheck) {
-              if (Irms < currentThreshold) {
-                statePump = LOW;
-                previousMillisSolenoidValve = millis();
-                countCurrentCheck = countCurrentCheck + 1;
-                stateLowCurrent = HIGH;
-                stateTopUp = HIGH;
+          if (stateTopUp == HIGH && stateSolenoidValve == HIGH && millis() - previousMillisSolenoidValve >= timerTopUpLowPressureHead)
+          {
+
+            countTopUp = countTopUp + 1;
+
+            if (pressureHead <= lowerPressureHeadThreshold)
+            {
+
+              if (countTopUp < 3)
+              {
+
+                // countTopUp = countTopUp + 1;
+
+                stateLowPressureHead = LOW;
+                startTimerLowPressureHead = millis();
+                MqttCountTopUp();
+
+                Serial.println(F("Head still low after top up, retrying...."));
               }
-              else if (Irms > currentThreshold) {
-                stateLowCurrent = LOW;
-              }
-              if (countCurrentCheck >= 3) {
+
+              else if (countTopUp >= 3)
+              {
                 stateError = HIGH;
-
-                stateError3 = HIGH; // Motor current too low
-
-                MqttStateError3();
-
-                digitalClockDisplay();
-
-                Serial.println(F("Motor current too low!!"));
-              }
-            }
-            else if (statePump == HIGH && stateLowCurrent == LOW) {
-              if (Irms < currentThreshold) {
-                stateLowCurrent = HIGH;
-              }
-              else {
-                countCurrentCheck = 0;
-                startDelayPumpON = millis();
+                stateError2 = HIGH;
+                MqttStateError2();
+                Serial.println(F("Head still low after 3X top up, I give up..."));
               }
             }
 
-            if (stateLowCurrent == HIGH && stateTopUp == HIGH && statePump == LOW) {
-              if (stateSolenoidValve == LOW && millis() - previousMillisSolenoidValve >= timerSolenoidValveOFF) {
-                stateSolenoidValve = HIGH;
-                previousMillisSolenoidValve = millis();
-              }
-              else if (stateSolenoidValve == HIGH && millis() - previousMillisSolenoidValve >= timerSolenoidValveON) {
-                stateSolenoidValve = LOW;
-                stateTopUp = LOW;
-                startDelayPumpON = millis();
-              }
+            else if (pressureHead > lowerPressureHeadThreshold)
+            {
+
+              stateLowPressureHead = LOW;
+
+              countTopUp = 0;
+            }
+
+            stateTopUp = LOW;
+          }
+
+          stateSolenoidValve = stateTopUp;
+        }
+
+        else if (stateLevelSwitch == HIGH)
+        {
+
+          if (statePump == LOW && stateSolenoidValve == LOW && stateTopUp == LOW)
+          {
+            if (millis() - startDelayPumpON >= onDelayPumpON)
+            {
+              statePump = HIGH;
+              startTimerCurrentCheck = millis();
+            }
+          }
+
+          if (statePump == HIGH && (countCurrentCheck == 0 || stateLowCurrent == HIGH) && millis() - startTimerCurrentCheck >= timerCurrentCheck)
+          {
+            if (Irms < currentThreshold)
+            {
+              statePump = LOW;
+              previousMillisSolenoidValve = millis();
+              countCurrentCheck = countCurrentCheck + 1;
+              stateLowCurrent = HIGH;
+              stateTopUp = HIGH;
+            }
+            else if (Irms > currentThreshold)
+            {
+              stateLowCurrent = LOW;
+            }
+            if (countCurrentCheck >= 3)
+            {
+              stateError = HIGH;
+
+              stateError3 = HIGH; // Motor current too low
+
+              MqttStateError3();
+
+              digitalClockDisplay();
+
+              Serial.println(F("Motor current too low!!"));
+            }
+          }
+          else if (statePump == HIGH && stateLowCurrent == LOW)
+          {
+            if (Irms < currentThreshold)
+            {
+              stateLowCurrent = HIGH;
+            }
+            else
+            {
+              countCurrentCheck = 0;
+              startDelayPumpON = millis();
+            }
+          }
+
+          if (stateLowCurrent == HIGH && stateTopUp == HIGH && statePump == LOW)
+          {
+            if (stateSolenoidValve == LOW && millis() - previousMillisSolenoidValve >= timerSolenoidValveOFF)
+            {
+              stateSolenoidValve = HIGH;
+              previousMillisSolenoidValve = millis();
+            }
+            else if (stateSolenoidValve == HIGH && millis() - previousMillisSolenoidValve >= timerSolenoidValveON)
+            {
+              stateSolenoidValve = LOW;
+              stateTopUp = LOW;
+              startDelayPumpON = millis();
             }
           }
         }
       }
+    }
 
-      break;
+    break;
   }
 
-
-  if (statePump == HIGH) {
+  if (statePump == HIGH)
+  {
     Irms = measureCurrent();
 
-    if (statePump != oldstatePump) {
+    if (statePump != oldstatePump)
+    {
 
       digitalClockDisplay();
       Serial.println(F("Pump ON"));
-      if (mqttconnected) {
+      if (mqttconnected)
+      {
         MqttStatePump();
         MqttIrms();
         MqttPressureHead();
       }
     }
-    if (false) {
-      if (mqttconnected && (millis() - timer2) > 1000) {
+    if (false)
+    {
+      if (mqttconnected && (millis() - timer2) > 1000)
+      {
         MqttIrms();
         MqttPressureHead();
         timer2 = millis();
       }
     }
   }
-  else if (statePump == LOW && statePump != oldstatePump) {
+  else if (statePump == LOW && statePump != oldstatePump)
+  {
     Irms = 0.0;
 
     digitalClockDisplay();
     Serial.println(F("Pump OFF"));
 
-    if (mqttconnected) {
+    if (mqttconnected)
+    {
       MqttStatePump();
       MqttIrms();
     }
   }
   oldstatePump = statePump;
 
-  if (stateSolenoidValve == HIGH) {
-    if (stateSolenoidValve != oldstateSolenoidValve) {
+  if (stateSolenoidValve == HIGH)
+  {
+    if (stateSolenoidValve != oldstateSolenoidValve)
+    {
 
       digitalClockDisplay();
       Serial.println(F("Solenoid Valve ON"));
 
-      if (mqttconnected) {
+      if (mqttconnected)
+      {
         MqttStateSolenoidValve();
         MqttPressureHead();
       }
     }
-    if (false) {
-      if (mqttconnected && (millis() - timer3) > 500) {
+    if (false)
+    {
+      if (mqttconnected && (millis() - timer3) > 500)
+      {
         MqttPressureHead();
         timer3 = millis();
       }
     }
-
   }
-  else if (stateSolenoidValve == LOW) {
-    if (stateSolenoidValve != oldstateSolenoidValve) {
+  else if (stateSolenoidValve == LOW)
+  {
+    if (stateSolenoidValve != oldstateSolenoidValve)
+    {
 
       digitalClockDisplay();
       Serial.println(F("Solenoid Valve OFF"));
 
-      if (mqttconnected) {
+      if (mqttconnected)
+      {
         MqttStateSolenoidValve();
         MqttPressureHead();
       }
@@ -1085,134 +1150,150 @@ void loop() {
   }
   oldstateSolenoidValve = stateSolenoidValve;
 
-
-
-
   /*-------- POWER LED STATUS ------*/
 
-  if (stateSwitchManualMode == HIGH) {
+  if (stateSwitchManualMode == HIGH)
+  {
 
-    if (stateLedPower == HIGH && millis() - timer6 >= 100) {
+    if (stateLedPower == HIGH && millis() - timer6 >= 100)
+    {
       //digitalWrite(pinLedPower, LOW);
-      stateLedPower = LOW;  // Update the state
-      timer6 = millis();  // Remember the time
+      stateLedPower = LOW; // Update the state
+      timer6 = millis();   // Remember the time
     }
-    if (stateLedPower == LOW && millis() - timer6 >= 300) {
+    if (stateLedPower == LOW && millis() - timer6 >= 300)
+    {
       //digitalWrite(pinLedPower, HIGH);
-      stateLedPower = HIGH;  // Update the state
-      timer6 = millis();  // Remember the time
+      stateLedPower = HIGH; // Update the state
+      timer6 = millis();    // Remember the time
     }
   }
-  else {
+  else
+  {
     stateLedPower = HIGH;
   }
 
-
-  if (stateLedPower == HIGH && stateLedPower != oldstateLedPower) {
+  if (stateLedPower == HIGH && stateLedPower != oldstateLedPower)
+  {
     oldstateLedPower = stateLedPower;
   }
-  else if (stateLedPower == LOW && stateLedPower != oldstateLedPower) {
+  else if (stateLedPower == LOW && stateLedPower != oldstateLedPower)
+  {
     oldstateLedPower = stateLedPower;
   }
-
 
   digitalWrite(pinLedLevelSwitch, stateLevelSwitch); // Turn on/off Level Switch Led based on switch status
   digitalWrite(pinPump, statePump);
   digitalWrite(pinSolenoidValve, stateSolenoidValve);
   digitalWrite(pinLedPower, stateLedPower);
 
-
   //---- print all parameter every 1 second
 
+  bool printEverySecond = false;
 
-  if (millis() - previousMillis >= 1000) {
+  if (printEverySecond)
+  {
+    if (millis() - previousMillis >= 1000)
+    {
 
-    previousMillis = millis();
+      previousMillis = millis();
 
-    /*--- printParameter(); ----- */
+      /*--- printParameter(); ----- */
 
-    if (true) {
+      if (true)
+      {
 
-      digitalClockDisplay();
+        digitalClockDisplay();
 
+        Serial.print(F("mqtt: "));
+        if (mqttconnected)
+        {
+          Serial.print(F("Connected"));
+        }
+        else
+        {
+          Serial.print(F("Disconnected"));
+        }
+        Serial.print(F(","));
 
-      Serial.print(F("mqtt: "));
-      if (mqttconnected) {
-        Serial.print (F("Connected"));
-      } else {
-        Serial.print (F("Disconnected"));
+        Serial.print(F(" Head: "));
+        Serial.print(pressureHead, 2);
+        Serial.print(F(" m,"));
+
+        //Serial.print(" count0: ");
+        //Serial.print (count0);
+        //Serial.print(",");
+
+        Serial.print(F(" Irms: "));
+        Serial.print(Irms, 2);
+        Serial.println(F(" A"));
       }
-      Serial.print(F(","));
-
-      Serial.print(F(" Head: "));
-      Serial.print (pressureHead, 2);
-      Serial.print(F(" m,"));
-
-      //Serial.print(" count0: ");
-      //Serial.print (count0);
-      //Serial.print(",");
-
-      Serial.print(F(" Irms: "));
-      Serial.print(Irms, 2);
-      Serial.println(F(" A"));
-
     }
   }
 
+  //bool stateError = LOW;   // General error state
+  //bool stateError1 = LOW;  // Head below minimum threshold
+  //bool stateError2 = LOW;  // Head still low after top-up
+  //bool stateError3 = LOW;  // Motor current too low
 
-  //boolean stateError = LOW;   // General error state
-  //boolean stateError1 = LOW;  // Head below minimum threshold
-  //boolean stateError2 = LOW;  // Head still low after top-up
-  //boolean stateError3 = LOW;  // Motor current too low
-
-  if (stateError == HIGH && stateError != old_stateError) {
+  if (stateError == HIGH && stateError != old_stateError)
+  {
     old_stateError = HIGH;
     Serial.println(F("GENERAL ERROR"));
   }
-  else if (stateError == LOW && stateError != old_stateError) {
+  else if (stateError == LOW && stateError != old_stateError)
+  {
     old_stateError = LOW;
     //Serial.println("GENERAL ERROR RESOLVED");
   }
 
-  if (stateError1 == HIGH && stateError1 != old_stateError1) {
+  if (stateError1 == HIGH && stateError1 != old_stateError1)
+  {
     timer9 = millis();
     old_stateError1 = HIGH;
     Serial.println(F("ERROR CODE 1"));
     Serial.println(F("Head below minimum threshold"));
   }
-  else if (stateError1 == LOW && stateError1 != old_stateError1) {
+  else if (stateError1 == LOW && stateError1 != old_stateError1)
+  {
     old_stateError1 = LOW;
     //Serial.println("Head back to Normal");
   }
 
-  if (stateError2 == HIGH && stateError2 != old_stateError2) {
+  if (stateError2 == HIGH && stateError2 != old_stateError2)
+  {
     timer9 = millis();
     old_stateError2 = HIGH;
     Serial.println(F("ERROR CODE 2"));
     Serial.println(F("Head still low after top-up"));
   }
-  else if (stateError2 == LOW && stateError2 != old_stateError2) {
+  else if (stateError2 == LOW && stateError2 != old_stateError2)
+  {
     old_stateError2 = LOW;
     //Serial.println("Head back to Normal");
   }
 
-  if (stateError3 == HIGH && stateError3 != old_stateError3) {
+  if (stateError3 == HIGH && stateError3 != old_stateError3)
+  {
     timer9 = millis();
     old_stateError3 = HIGH;
     Serial.println(F("ERROR CODE 3"));
     Serial.println(F("Motor current too low"));
   }
-  else if (stateError3 == LOW && stateError3 != old_stateError3) {
+  else if (stateError3 == LOW && stateError3 != old_stateError3)
+  {
     old_stateError3 = LOW;
     //Serial.println("Motor run normally");
   }
 
-  if (stateError == HIGH || stateError1 == HIGH || stateError2 == HIGH || stateError3 == HIGH) {
+  if (stateError == HIGH || stateError1 == HIGH || stateError2 == HIGH || stateError3 == HIGH)
+  {
     //while (true) {
     Error();
 
     unsigned long RESETTING = 600000;
-    if (millis() - timer9 > RESETTING) {
+    if (millis() - timer9 > RESETTING)
+    {
       RESET_ALL();
       //Serial.println();
       Serial.print(F("RESETTING... AFTER "));
@@ -1224,12 +1305,10 @@ void loop() {
   }
 }
 
-
-
-
 /*----------- FUNCTIONS -------------------*/
 
-void RESET_ALL() {
+void RESET_ALL()
+{
 
   /*-- Reset general states ---*/
   statePump = LOW;
@@ -1262,7 +1341,6 @@ void RESET_ALL() {
   old_stateError2 = stateError2;
   old_stateError3 = stateError3;
 
-
   MQTTstateSwitchPump = LOW;
   MQTTstateSwitchSolenoidValve = LOW;
 
@@ -1272,7 +1350,6 @@ void RESET_ALL() {
   //MqttStateLedPower();
 
   MqttStateLevelSwitch();
-
 }
 
 /*
@@ -1288,8 +1365,8 @@ void RESET_ALL() {
   //float lowerPressureHeadThreshold = 2.0;
   //float upperPressureHeadThreshold = 4.0;
   //float noPressureHeadThreshold = 0.1;
-  //boolean stateLowPressureHead;
-  //boolean oldStateLowPressureHead = LOW;
+  //bool stateLowPressureHead;
+  //bool oldStateLowPressureHead = LOW;
 
   pressureReading = analogRead(pressurePin);   // Range : 0..1024
   MPa = (pressureReading - pressureZero) * pressureStep;
@@ -1300,21 +1377,22 @@ void RESET_ALL() {
   }
 */
 
-float measurePressureFAST() {
+float measurePressureFAST()
+{
 
   const int pressurePin = A1;
-  int pressureZero = 102;                       //raw voltage reading when zero pressure; normally should be 102
+  int pressureZero = 102; //raw voltage reading when zero pressure; normally should be 102
   float MPa = (analogRead(pressurePin) - pressureZero) * 0.000609756098;
 
-  return MPa * 101.998;                                // 1 MPa = 101.9977334 meter Head
+  return MPa * 101.998; // 1 MPa = 101.9977334 meter Head
 
   //return pressureHead;
 }
 
-float measureCurrent() {
+float measureCurrent()
+{
 
   float current;
-
 
   const int currentPin = A0;
 
@@ -1323,17 +1401,16 @@ float measureCurrent() {
      It takes about 100 microseconds (0.0001 s) to read an analog input.
      So the maximum reading rate is about 10,000 times a second.
   */
-  const unsigned long sampleTime = 100000;                   // sample over 100ms, it is an exact number of cycles for both 50Hz and 60Hz mains
+  const unsigned long sampleTime = 100000; // sample over 100ms, it is an exact number of cycles for both 50Hz and 60Hz mains
   //const unsigned long numSamples = 200;                    // choose the number of samples to divide sampleTime exactly, but low enough for the ADC to keep up
   //const unsigned long sampleInterval = sampleTime/numSamples; // the sampling interval, must be longer than the ADC conversion time
-  const unsigned long sampleInterval = 160;                 // It takes about 100 microseconds (0.0001 s) to read an analog input.
+  const unsigned long sampleInterval = 160; // It takes about 100 microseconds (0.0001 s) to read an analog input.
   const unsigned long numSamples = sampleTime / sampleInterval;
-  const int adc_zero = 506;                                 // relative digital zero of the arduino input from ACS712 (could make this a variable and auto-adjust it)
-  int sensitivity = 99; // use 185 for 5A module, 100 for 20A Module and 66 for 30A Module
+  const int adc_zero = 506; // relative digital zero of the arduino input from ACS712 (could make this a variable and auto-adjust it)
+  int sensitivity = 99;     // use 185 for 5A module, 100 for 20A Module and 66 for 30A Module
   float Vrms;
   //float Irms;
   float noise = 0.03; //.... ??
-
 
   unsigned long startTime;
   unsigned long endTime;
@@ -1352,7 +1429,7 @@ float measureCurrent() {
     {
       float adc_raw = (analogRead(currentPin) - adc_zero) * 4.882; // 4.882 berasal dari 5000mV/1024;
       currentAcc += (adc_raw * adc_raw);
-      ++count; // ++x;   increment x by one and returns the new value of x
+      ++count;                      // ++x;   increment x by one and returns the new value of x
       prevMicros += sampleInterval; // x += y;   equivalent to the expression x = x + y;
     }
   }
@@ -1377,212 +1454,223 @@ float measureCurrent() {
 void Error()
 {
 
-
   long timeBuzzerON = 650;
   long timeBuzzerOFF = 350;
 
-  if (stateBuzzer == HIGH && millis() - previousMillisBuzzer >= timeBuzzerOFF) {
-    digitalWrite(pinBuzzer, LOW);  // Turn on Solenoid Valve
+  if (stateBuzzer == HIGH && millis() - previousMillisBuzzer >= timeBuzzerOFF)
+  {
+    digitalWrite(pinBuzzer, LOW); // Turn on Solenoid Valve
     digitalWrite(pinLedPower, HIGH);
-    stateBuzzer = LOW;  // Update the state
-    previousMillisBuzzer = millis();  // Remember the time
+    stateBuzzer = LOW;               // Update the state
+    previousMillisBuzzer = millis(); // Remember the time
   }
-  if (stateBuzzer == LOW && millis() - previousMillisBuzzer >= timeBuzzerON) {
-    digitalWrite(pinBuzzer, HIGH);  // Turn on Solenoid Valve
+  if (stateBuzzer == LOW && millis() - previousMillisBuzzer >= timeBuzzerON)
+  {
+    digitalWrite(pinBuzzer, HIGH); // Turn on Solenoid Valve
     digitalWrite(pinLedPower, LOW);
-    stateBuzzer = HIGH;  // Update the state
-    previousMillisBuzzer = millis();  // Remember the time
+    stateBuzzer = HIGH;              // Update the state
+    previousMillisBuzzer = millis(); // Remember the time
   }
-
 }
-
-
 
 // Format:
 // publish(topic, (uint8_t*)data, strlen(data), qos, retain);
 
 void MqttStateLevelSwitch()
 {
-  if (mqttconnected) {
+  if (mqttconnected)
+  {
     char buf[1];
     itoa(stateLevelSwitch, buf, 2);
     //mqtt.publish("/rumah/sts/pompa/stateLevelSwitch", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateLevelSwitch);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char*)pgm_read_word(&(PUBLISH_TOPIC_TABLE[0])));
+    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[0])));
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
 
 void MqttStateSwitchManualMode()
 {
-  if (mqttconnected) {
+  if (mqttconnected)
+  {
     char buf[1];
     itoa(stateSwitchManualMode, buf, 2);
     //mqtt.publish("/rumah/sts/pompa/stateSwitchManualMode", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateSwitchManualMode);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char*)pgm_read_word(&(PUBLISH_TOPIC_TABLE[1])));
+    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[1])));
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
 
 void MqttStateSwitchPump()
 {
-  if (mqttconnected) {
+  if (mqttconnected)
+  {
     char buf[1];
     itoa(stateSwitchPump, buf, 2);
     //mqtt.publish("/rumah/sts/pompa/stateSwitchPump", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateSwitchPump);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char*)pgm_read_word(&(PUBLISH_TOPIC_TABLE[2])));
+    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[2])));
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
 
 void MqttStateSwitchSolenoidValve()
 {
-  if (mqttconnected) {
+  if (mqttconnected)
+  {
     char buf[1];
     itoa(stateSwitchSolenoidValve, buf, 2);
     //mqtt.publish("/rumah/sts/pompa/stateSwitchSolenoidValve", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateSwitchSolenoidValve);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char*)pgm_read_word(&(PUBLISH_TOPIC_TABLE[3])));
+    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[3])));
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
 
 void MqttStatePump()
 {
-  if (mqttconnected) {
+  if (mqttconnected)
+  {
     char buf[1];
     itoa(statePump, buf, 2);
     //mqtt.publish("/rumah/sts/pompa/statePump", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_statePump);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char*)pgm_read_word(&(PUBLISH_TOPIC_TABLE[4])));
+    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[4])));
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
 
 void MqttStateSolenoidValve()
 {
-  if (mqttconnected) {
+  if (mqttconnected)
+  {
     char buf[1];
     itoa(stateSolenoidValve, buf, 2);
     //mqtt.publish("/rumah/sts/pompa/stateSolenoidValve", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateSolenoidValve);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char*)pgm_read_word(&(PUBLISH_TOPIC_TABLE[5])));
+    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[5])));
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
 
 void MqttIrms()
 {
-  if (mqttconnected) {
+  if (mqttconnected)
+  {
     char buf[5];
     dtostrf(Irms, 1, 2, buf);
     //mqtt.publish("/rumah/sts/pompa/Irms", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_Irms);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char*)pgm_read_word(&(PUBLISH_TOPIC_TABLE[6])));
+    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[6])));
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
 
 void MqttPressureHead()
 {
-  if (mqttconnected) {
+  if (mqttconnected)
+  {
     char buf[5];
     dtostrf(pressureHead, 1, 1, buf);
     //mqtt.publish("/rumah/sts/pompa/pressureHead", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateSwitchManualMode);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char*)pgm_read_word(&(PUBLISH_TOPIC_TABLE[7])));
+    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[7])));
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
 
 void MqttCountTopUp()
 {
-  if (mqttconnected) {
+  if (mqttconnected)
+  {
     char buf[1];
     itoa(countTopUp, buf, 2);
     //mqtt.publish("/rumah/sts/pompa/countTopUp", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_countTopUp);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char*)pgm_read_word(&(PUBLISH_TOPIC_TABLE[8])));
+    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[8])));
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
 
 void MqttStateError1()
 {
-  if (mqttconnected) {
+  if (mqttconnected)
+  {
     char buf[1];
     //itoa(stateError1, buf, 2);
-    snprintf ( buf, 2, "%d", stateError1 );
+    snprintf(buf, 2, "%d", stateError1);
 
     byte bufLen = strlen_P(STS_stateError1);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char*)pgm_read_word(&(PUBLISH_TOPIC_TABLE[9])));
+    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[9])));
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
 
 void MqttStateError2()
 {
-  if (mqttconnected) {
+  if (mqttconnected)
+  {
     char buf[1];
     itoa(stateError2, buf, 2);
     //mqtt.publish("/rumah/sts/pompa/stateError2", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateError2);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char*)pgm_read_word(&(PUBLISH_TOPIC_TABLE[10])));
+    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[10])));
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
 
 void MqttStateError3()
 {
-  if (mqttconnected) {
+  if (mqttconnected)
+  {
     char buf[1];
     itoa(stateError3, buf, 2);
     //mqtt.publish("/rumah/sts/pompa/stateError3", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateError3);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char*)pgm_read_word(&(PUBLISH_TOPIC_TABLE[11])));
+    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[11])));
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
 
 void MqttCONNECTED()
 {
-  if (mqttconnected) {
+  if (mqttconnected)
+  {
     //construct topic
     byte topicLen = strlen_P(STS_mqttCONNECTED);
     char TOPIC_BUF[topicLen + 1];
     memset(TOPIC_BUF, 0, sizeof TOPIC_BUF);
-    strcpy_P(TOPIC_BUF, (char*)pgm_read_word(&(PUBLISH_TOPIC_TABLE[12])));
+    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[12])));
 
     //construct payload
     byte payloadLen = strlen_P(CONNECTED);
     char PAYLOAD_BUF[payloadLen + 1];
     memset(PAYLOAD_BUF, 0, sizeof PAYLOAD_BUF);
-    strcpy_P(PAYLOAD_BUF, (char*)pgm_read_byte(&(RECEIVE_PAYLOAD_TABLE[4])));
+    strcpy_P(PAYLOAD_BUF, (char *)pgm_read_byte(&(RECEIVE_PAYLOAD_TABLE[4])));
 
     //    digitalClockDisplay();
     //    Serial.print (payloadLen);
@@ -1591,10 +1679,8 @@ void MqttCONNECTED()
 
     //memcpy_P(PAYLOAD_BUF, (char*)pgm_read_word(&(PUBLISH_PAYLOAD_TABLE[0])), payloadLen);
 
-
     //printProgStr (PAYLOAD_BUF, (const char *) &PUBLISH_PAYLOAD_TABLE[0], strlen_P(STRCONNECTED));
     //printProgStr2 ((const char *) &PUBLISH_PAYLOAD_TABLE[0]);
-
 
     //mqtt.publish(TOPIC_BUF, PAYLOAD_BUF, 0, 0);
     mqtt.publish(TOPIC_BUF, "CONNECTED", 0, 0);
@@ -1602,11 +1688,12 @@ void MqttCONNECTED()
 }
 
 // Print a string from Program Memory directly to save RAM
-void printProgStr (char* c, const char * str, byte length)
+void printProgStr(char *c, const char *str, byte length)
 {
   //char c;
-  if (!str) {
-    Serial.println (F("Garbled  bytes!"));  // finish line off
+  if (!str)
+  {
+    Serial.println(F("Garbled  bytes!")); // finish line off
     return;
   }
 
@@ -1616,23 +1703,21 @@ void printProgStr (char* c, const char * str, byte length)
   {
     c[i] = pgm_read_byte(str[i]);
     digitalClockDisplay();
-    Serial.print (c);
+    Serial.print(c);
   } // end of for loop
   c[length] = '\0';
-  Serial.println ();  // finish line off
+  Serial.println(); // finish line off
 } // end of printProgStr
 
 // Print a string from Program Memory directly to save RAM
-void printProgStr2 (const char * str)
+void printProgStr2(const char *str)
 {
   char c;
   if (!str)
     return;
   while ((c = pgm_read_byte(str++)))
-    Serial.print (c);
+    Serial.print(c);
 } // end of printProgStr
-
-
 
 /*
   void MqttStateLedPower()
@@ -1643,7 +1728,8 @@ void printProgStr2 (const char * str)
   }
 */
 
-void digitalClockDisplay() {
+void digitalClockDisplay()
+{
   // digital clock display of the time
   Serial.print(year());
   Serial.print(F(" "));
@@ -1657,8 +1743,8 @@ void digitalClockDisplay() {
   Serial.print(F("> "));
 }
 
-
-void stringClockDisplay() {
+void stringClockDisplay()
+{
   // string clock display of the time
   Serial.print(year());
   Serial.print(F("-"));
@@ -1670,10 +1756,10 @@ void stringClockDisplay() {
   printDigits(minute());
   printDigits(second());
   Serial.println(F(""));
-
 }
 
-void printDigits(int digits) {
+void printDigits(int digits)
+{
   // utility function for digital clock display: prints preceding colon and leading 0
   Serial.print(F(":"));
   if (digits < 10)
@@ -1682,18 +1768,21 @@ void printDigits(int digits) {
   Serial.print(digits);
 }
 
-time_t requestSync() {
+time_t requestSync()
+{
 
   digitalClockDisplay();
   Serial.print(F("NTP SYNC... "));
 
   //if (mqttconnected) {
-  if (wifiStatus == STATION_GOT_IP) {
+  if (wifiStatus == STATION_GOT_IP)
+  {
 
     const unsigned long DEFAULT_TIME = 1357041600; // Jan 1 2013
     uint32_t ntp_time = cmd.GetTime();
 
-    if (ntp_time >= DEFAULT_TIME) { // check the integer is a valid time (greater than Jan 1 2013)
+    if (ntp_time >= DEFAULT_TIME)
+    {                    // check the integer is a valid time (greater than Jan 1 2013)
       setTime(ntp_time); // Sync Arduino clock to the time received
       //digitalClockDisplay();
       Serial.print(F("GOT RESPONSE: "));
@@ -1708,42 +1797,51 @@ time_t requestSync() {
 
     return 0; // NTP bad response
   }
-  else {
+  else
+  {
     //digitalClockDisplay();
     Serial.println(F("POSTPONED"));
     return 0;
   }
 }
 
-int pgm_lastIndexOf(uint8_t c, const char * p)
+int pgm_lastIndexOf(uint8_t c, const char *p)
 {
   int last_index = -1; // -1 indicates no match
   uint8_t b;
-  for (int i = 0; true; i++) {
+  for (int i = 0; true; i++)
+  {
     b = pgm_read_byte(p++);
     if (b == c)
       last_index = i;
-    else if (b == 0) break;
+    else if (b == 0)
+      break;
   }
   return last_index;
 }
 
 // displays at startup the Sketch running in the Arduino
-void display_srcfile_details(void) {
-  const char *the_path = PSTR(__FILE__);           // save RAM, use flash to hold __FILE__ instead
+void display_srcfile_details(void)
+{
+  const char *the_path = PSTR(__FILE__); // save RAM, use flash to hold __FILE__ instead
 
   int slash_loc = pgm_lastIndexOf('/', the_path); // index of last '/'
-  if (slash_loc < 0) slash_loc = pgm_lastIndexOf('\\', the_path); // or last '\' (windows, ugh)
+  if (slash_loc < 0)
+    slash_loc = pgm_lastIndexOf('\\', the_path); // or last '\' (windows, ugh)
 
-  int dot_loc = pgm_lastIndexOf('.', the_path);  // index of last '.'
-  if (dot_loc < 0) dot_loc = pgm_lastIndexOf(0, the_path); // if no dot, return end of string
+  int dot_loc = pgm_lastIndexOf('.', the_path); // index of last '.'
+  if (dot_loc < 0)
+    dot_loc = pgm_lastIndexOf(0, the_path); // if no dot, return end of string
 
   Serial.print(F("\nSketch name: "));
 
-  for (int i = slash_loc + 1; i < dot_loc; i++) {
+  for (int i = slash_loc + 1; i < dot_loc; i++)
+  {
     uint8_t b = pgm_read_byte(&the_path[i]);
-    if (b != 0) Serial.print((char) b);
-    else break;
+    if (b != 0)
+      Serial.print((char)b);
+    else
+      break;
   }
   Serial.println();
 
@@ -1753,4 +1851,3 @@ void display_srcfile_details(void) {
   Serial.println(__TIME__);
   Serial.println();
 }
-
