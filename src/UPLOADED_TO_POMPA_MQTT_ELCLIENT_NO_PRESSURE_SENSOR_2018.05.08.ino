@@ -1,4 +1,5 @@
 #include <TimeLib.h>
+#include <avr/pgmspace.h>
 #include "ToggleSwitch.h"
 #include "ButtonSwitch.h"
 #include <ELClient.h>
@@ -65,12 +66,12 @@ bool oldstateLedPower;
 // Pump state variables
 //bool oldStatePump = HIGH;                // Default pump state
 unsigned long startDelayPumpON = 0;
-long onDelayPumpON = 5000; // Default: 3s; How long delay before starting the pump ON; example: when level switch is ON
+unsigned long onDelayPumpON = 5000; // Default: 3s; How long delay before starting the pump ON; example: when level switch is ON
 
 // Current check variables
 unsigned long startTimerCurrentCheck = 0;
-long timerCurrentCheck = 20000; // How long to wait before making decision whether current is below threshold or not
-float currentThreshold = 2.65;  //2.65
+unsigned long timerCurrentCheck = 20000; // How long to wait before making decision whether current is below threshold or not
+float currentThreshold = 2.65;           //2.65
 bool stateLowCurrent;
 float Irms;
 
@@ -93,9 +94,9 @@ bool oldstateLowPressureHead;
 float lowerPressureHeadThreshold = 0.5; // Default: 2.0; in meter head unit
 float upperPressureHeadThreshold = 4.0; // Default: 4.0; in meter head unit
 float noPressureHeadThreshold = 0.05;   // Default: 0.1; in meter head unit
-long startTimerLowPressureHead = 0;
-long timerLowPressureHead = 15000;      // Default: 15000; 15s; How long to wait before making decision to whther low pressure state really occur or not
-long timerTopUpLowPressureHead = 15000; // Default: 15000; 15s; How long valve should open for topping up while low pressure state occur
+unsigned long startTimerLowPressureHead = 0;
+unsigned long timerLowPressureHead = 15000;      // Default: 15000; 15s; How long to wait before making decision to whther low pressure state really occur or not
+unsigned long timerTopUpLowPressureHead = 15000; // Default: 15000; 15s; How long valve should open for topping up while low pressure state occur
 int countTopUp = 0;
 
 //Error state
@@ -109,8 +110,8 @@ bool old_stateError2;
 bool old_stateError3;
 
 //Solenoid valve variables
-long timerSolenoidValveON = 15000; // Default: 15s; How long valve should open for topping up while low motor current state occur
-long timerSolenoidValveOFF = 3000; // Default: 3s; How long valve should close when topping up while low motor current state occur
+unsigned long timerSolenoidValveON = 15000; // Default: 15s; How long valve should open for topping up while low motor current state occur
+unsigned long timerSolenoidValveOFF = 3000; // Default: 3s; How long valve should close when topping up while low motor current state occur
 unsigned long previousMillisSolenoidValve;
 
 //Buzzer variables
@@ -234,7 +235,21 @@ void mqttConnected(void *response)
   //mqtt.subscribe("/esp-link/2", 1);
   //mqtt.publish(F("/esp-link/0"), "test1");
   // api: void publish(const char* topic, const char* data, uint8_t qos=0, uint8_t retain=0);
-  mqtt.publish(F("mainpump/mqttstatus"), F("CONNECTED"), 2, 1);
+  // mqtt.publish(F("mainpump/mqttstatus"), F("CONNECTED"), 2, 1);
+
+  byte len;
+
+  //construct topic
+  len = strlen_P(STS_mqttCONNECTED);
+  char TOPIC_BUF[len + 1];
+  sprintf_P(TOPIC_BUF, STS_mqttCONNECTED);
+
+  //construct payload
+  len = strlen_P(STRCONNECTED);
+  char PAYLOAD_BUF[len + 1];
+  sprintf_P(PAYLOAD_BUF, STRCONNECTED);
+
+  mqtt.publish(TOPIC_BUF, PAYLOAD_BUF, 2, 1);
 
   mqttconnected = true;
 }
@@ -430,7 +445,19 @@ void setup()
 
   //Serial.println("ARDUINO: setup mqtt lwt");
   // void lwt(const char* topic, const char* message, uint8_t qos=0, uint8_t retain=0);
-  mqtt.lwt(F("mainpump/mqttstatus"), F("DISCONNECTED"), 2, 1); //or mqtt.lwt("/lwt", "offline");
+  byte len;
+
+  //construct topic
+  len = strlen_P(STS_mqttCONNECTED);
+  char TOPIC_BUF[len + 1];
+  sprintf_P(TOPIC_BUF, STS_mqttCONNECTED);
+
+  //construct payload
+  len = strlen_P(STRDISCONNECTED);
+  char PAYLOAD_BUF[len + 1];
+  sprintf_P(PAYLOAD_BUF, STRDISCONNECTED);
+
+  mqtt.lwt(TOPIC_BUF, PAYLOAD_BUF, 2, 1);
 
   digitalClockDisplay();
   Serial.println(F("EL-MQTT ready"));
@@ -565,16 +592,17 @@ void loop()
   {
     pressureHead = 10.0;
 
-    bool enable = true;
+    // change to TRUE to activate manual fill
+    bool enable = false;
     if (enable)
     {
       static uint32_t timeLedChanged = millis();
       static uint32_t period = 0;
       static bool ledOn = false;
 
-      const uint8_t pin = pinPump;
+      // const uint8_t pin = pinPump;
       uint32_t offPeriod = 3600000; // default=3600000 ; i.e 1 hour
-      uint32_t onPeriod = 1500;     // default=2000 ; i.e 2 seconds
+      uint32_t onPeriod = 3000;     // default=2000 ; i.e 2 seconds
       const uint32_t periods[] = {offPeriod, onPeriod};
 
       if (millis() - timeLedChanged >= period)
@@ -584,7 +612,6 @@ void loop()
         if (ledOn == true)
         {
           ledOn = false;
-          // digitalWrite(pin, ledOn);
           period = periods[ledOn];
           statePump = ledOn;
           // MQTTstateSwitchManualMode = ledOn;
@@ -594,7 +621,6 @@ void loop()
         else
         {
           ledOn = true;
-          // digitalWrite(pin, ledOn);
           period = periods[ledOn];
           statePump = ledOn;
           // MQTTstateSwitchManualMode = ledOn;
@@ -787,7 +813,7 @@ void loop()
     {
 
       stateSwitchSolenoidValve = MQTTstateSwitchSolenoidValve;
-      stateSwitchPump != LOW;
+      stateSwitchPump = LOW;
 
       if (stateSwitchSolenoidValve != oldStateSwitchSolenoidValve && stateSwitchSolenoidValve == LOW)
       {
@@ -1191,6 +1217,15 @@ void loop()
 
   bool printEverySecond = false;
 
+  if (statePump)
+  {
+    printEverySecond = true;
+  }
+  else
+  {
+    printEverySecond = false;
+  }
+
   if (printEverySecond)
   {
     if (millis() - previousMillis >= 1000)
@@ -1392,7 +1427,7 @@ float measurePressureFAST()
 float measureCurrent()
 {
 
-  float current;
+  // float current;
 
   const int currentPin = A0;
 
@@ -1412,16 +1447,16 @@ float measureCurrent()
   //float Irms;
   float noise = 0.03; //.... ??
 
-  unsigned long startTime;
-  unsigned long endTime;
-  unsigned long calcTime;
+  // unsigned long startTime;
+  // unsigned long endTime;
+  // unsigned long calcTime;
   // relative digital zero of the arduino input from ACS712 (could make this a variable and auto-adjust it)
-  float currentThreshold = 2.65; // 2.8 Amp when voltage goes below 180 Volt
-  unsigned long timeStartCurrentSense;
-  unsigned long timeStopCurrentSense;
+  // float currentThreshold = 2.65; // 2.8 Amp when voltage goes below 180 Volt
+  // unsigned long timeStartCurrentSense;
+  // unsigned long timeStopCurrentSense;
 
   float currentAcc;
-  int count = 0;
+  uint16_t count = 0;
   unsigned long prevMicros = micros() - sampleInterval;
   while (count < numSamples)
   {
@@ -1454,8 +1489,8 @@ float measureCurrent()
 void Error()
 {
 
-  long timeBuzzerON = 650;
-  long timeBuzzerOFF = 350;
+  unsigned long timeBuzzerON = 650;
+  unsigned long timeBuzzerOFF = 350;
 
   if (stateBuzzer == HIGH && millis() - previousMillisBuzzer >= timeBuzzerOFF)
   {
@@ -1660,29 +1695,19 @@ void MqttCONNECTED()
 {
   if (mqttconnected)
   {
+    byte len;
+
     //construct topic
-    byte topicLen = strlen_P(STS_mqttCONNECTED);
-    char TOPIC_BUF[topicLen + 1];
-    memset(TOPIC_BUF, 0, sizeof TOPIC_BUF);
-    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[12])));
+    len = strlen_P(STS_mqttCONNECTED);
+    char TOPIC_BUF[len + 1];
+    sprintf_P(TOPIC_BUF, STS_mqttCONNECTED);
 
-    //construct payload
-    byte payloadLen = strlen_P(CONNECTED);
-    char PAYLOAD_BUF[payloadLen + 1];
-    memset(PAYLOAD_BUF, 0, sizeof PAYLOAD_BUF);
-    strcpy_P(PAYLOAD_BUF, (char *)pgm_read_byte(&(RECEIVE_PAYLOAD_TABLE[4])));
+    // //construct payload
+    // len = strlen_P(STRCONNECTED);
+    // char PAYLOAD_BUF[len + 1];
+    // sprintf_P(PAYLOAD_BUF, STRCONNECTED);
 
-    //    digitalClockDisplay();
-    //    Serial.print (payloadLen);
-    //    Serial.print (" ");
-    //    Serial.println (PAYLOAD_BUF);
-
-    //memcpy_P(PAYLOAD_BUF, (char*)pgm_read_word(&(PUBLISH_PAYLOAD_TABLE[0])), payloadLen);
-
-    //printProgStr (PAYLOAD_BUF, (const char *) &PUBLISH_PAYLOAD_TABLE[0], strlen_P(STRCONNECTED));
-    //printProgStr2 ((const char *) &PUBLISH_PAYLOAD_TABLE[0]);
-
-    //mqtt.publish(TOPIC_BUF, PAYLOAD_BUF, 0, 0);
+    // mqtt.publish(TOPIC_BUF, PAYLOAD_BUF, 0, 0);
     mqtt.publish(TOPIC_BUF, "CONNECTED", 0, 0);
   }
 }

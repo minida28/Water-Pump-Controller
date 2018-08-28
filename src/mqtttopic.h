@@ -1,3 +1,4 @@
+#include <avr/pgmspace.h>
 
 const char CMD_stateSwitchManualMode [] PROGMEM = "/rumah/cmd/pompa/stateSwitchManualMode";
 const char CMD_stateSwitchPump [] PROGMEM = "/rumah/cmd/pompa/stateSwitchPump";
