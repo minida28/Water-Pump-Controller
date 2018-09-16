@@ -281,39 +281,37 @@ void mqttData(void *response)
 
   digitalClockDisplay();
 
+  char bufTopic[64];
+  char bufPayload[16];
+
+  res->popChar(bufTopic);  
   Serial.print(F("Received: topic="));
-  String topic = res->popString();
-  Serial.println(topic);
+  Serial.println(bufTopic);  
 
   digitalClockDisplay();
 
-  Serial.print(F("data="));
-  String data = res->popString();
-  Serial.println(data);
+  res->popChar(bufPayload);
+  Serial.print(F("payload="));
+  Serial.println(bufPayload);
 
   byte numRECEIVE_TOPIC_TABLE = sizeof RECEIVE_TOPIC_TABLE / sizeof RECEIVE_TOPIC_TABLE[0];
   byte numRECEIVE_PAYLOAD_TABLE = sizeof RECEIVE_PAYLOAD_TABLE / sizeof RECEIVE_PAYLOAD_TABLE[0];
-  //  Serial.print(F("Size of Topic Table: "));
-  //  Serial.println(numRECEIVE_TOPIC_TABLE);
-  //  Serial.print(F("Size of Payload Table: "));
-  //  Serial.println(numRECEIVE_PAYLOAD_TABLE);
-
-  char TOPIC_BUF[64];
-  char PAYLOAD_BUF[16];
 
   for (int i = 0; i < numRECEIVE_TOPIC_TABLE; i++)
   {
-    memset(TOPIC_BUF, 0, sizeof TOPIC_BUF);
-    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(RECEIVE_TOPIC_TABLE[i]))); // Necessary casts and dereferencing, just copy.
-
-    if (topic == TOPIC_BUF)
+    uint8_t len;
+    len = strlen_P(RECEIVE_TOPIC_TABLE[i]);
+   
+    if (strncmp_P(bufTopic, (const char *)pgm_read_word(&(RECEIVE_TOPIC_TABLE[i])), len) == 0)
     {
+      // Serial.println(F("Topic found!"));
       for (int k = 0; k < numRECEIVE_PAYLOAD_TABLE; k++)
       {
-        memset(PAYLOAD_BUF, 0, sizeof PAYLOAD_BUF);
-        strcpy_P(PAYLOAD_BUF, (char *)pgm_read_word(&(RECEIVE_PAYLOAD_TABLE[k])));
-        if (data == PAYLOAD_BUF)
+        len = strlen_P(RECEIVE_PAYLOAD_TABLE[k]);
+
+        if (strncmp_P(bufPayload, (const char *)pgm_read_word(&(RECEIVE_PAYLOAD_TABLE[k])), len) == 0)
         {
+          // Serial.println(F("Data found!"));
           if (k == 0 || k == 1)
           {
             if (i == 0)
@@ -1515,13 +1513,14 @@ void MqttStateLevelSwitch()
 {
   if (mqttconnected)
   {
-    char buf[1];
-    itoa(stateLevelSwitch, buf, 2);
+    char buf[2];
+    itoa(stateLevelSwitch, buf, 10);
     //mqtt.publish("/rumah/sts/pompa/stateLevelSwitch", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateLevelSwitch);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[0])));
+    // strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[0])));
+    sprintf_P(TOPIC_BUF, PUBLISH_TOPIC_TABLE[0]);
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
@@ -1531,12 +1530,13 @@ void MqttStateSwitchManualMode()
   if (mqttconnected)
   {
     char buf[1];
-    itoa(stateSwitchManualMode, buf, 2);
+    itoa(stateSwitchManualMode, buf, 10);
     //mqtt.publish("/rumah/sts/pompa/stateSwitchManualMode", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateSwitchManualMode);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[1])));
+    // strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[1])));
+    sprintf_P(TOPIC_BUF, PUBLISH_TOPIC_TABLE[1]);
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
@@ -1545,13 +1545,14 @@ void MqttStateSwitchPump()
 {
   if (mqttconnected)
   {
-    char buf[1];
-    itoa(stateSwitchPump, buf, 2);
+    char buf[2];
+    itoa(stateSwitchPump, buf, 10);
     //mqtt.publish("/rumah/sts/pompa/stateSwitchPump", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateSwitchPump);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[2])));
+    // strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[2])));
+    sprintf_P(TOPIC_BUF, PUBLISH_TOPIC_TABLE[2]);
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
@@ -1560,13 +1561,14 @@ void MqttStateSwitchSolenoidValve()
 {
   if (mqttconnected)
   {
-    char buf[1];
-    itoa(stateSwitchSolenoidValve, buf, 2);
+    char buf[2];
+    itoa(stateSwitchSolenoidValve, buf, 10);
     //mqtt.publish("/rumah/sts/pompa/stateSwitchSolenoidValve", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateSwitchSolenoidValve);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[3])));
+    // strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[3])));
+    sprintf_P(TOPIC_BUF, PUBLISH_TOPIC_TABLE[3]);
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
@@ -1575,13 +1577,14 @@ void MqttStatePump()
 {
   if (mqttconnected)
   {
-    char buf[1];
-    itoa(statePump, buf, 2);
+    char buf[2];
+    itoa(statePump, buf, 10);
     //mqtt.publish("/rumah/sts/pompa/statePump", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_statePump);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[4])));
+    // strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[4])));
+    sprintf_P(TOPIC_BUF, PUBLISH_TOPIC_TABLE[4]);
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
@@ -1590,13 +1593,14 @@ void MqttStateSolenoidValve()
 {
   if (mqttconnected)
   {
-    char buf[1];
-    itoa(stateSolenoidValve, buf, 2);
+    char buf[2];
+    itoa(stateSolenoidValve, buf, 10);
     //mqtt.publish("/rumah/sts/pompa/stateSolenoidValve", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateSolenoidValve);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[5])));
+    // strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[5])));
+    sprintf_P(TOPIC_BUF, PUBLISH_TOPIC_TABLE[5]);
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
@@ -1605,13 +1609,14 @@ void MqttIrms()
 {
   if (mqttconnected)
   {
-    char buf[5];
+    char buf[6];
     dtostrf(Irms, 1, 2, buf);
     //mqtt.publish("/rumah/sts/pompa/Irms", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_Irms);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[6])));
+    // strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[6])));
+    sprintf_P(TOPIC_BUF, PUBLISH_TOPIC_TABLE[6]);
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
@@ -1620,13 +1625,14 @@ void MqttPressureHead()
 {
   if (mqttconnected)
   {
-    char buf[5];
+    char buf[6];
     dtostrf(pressureHead, 1, 1, buf);
     //mqtt.publish("/rumah/sts/pompa/pressureHead", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateSwitchManualMode);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[7])));
+    // strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[7])));
+    sprintf_P(TOPIC_BUF, PUBLISH_TOPIC_TABLE[7]);
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
@@ -1635,13 +1641,14 @@ void MqttCountTopUp()
 {
   if (mqttconnected)
   {
-    char buf[1];
-    itoa(countTopUp, buf, 2);
+    char buf[3];
+    itoa(countTopUp, buf, 10);
     //mqtt.publish("/rumah/sts/pompa/countTopUp", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_countTopUp);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[8])));
+    // strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[8])));
+    sprintf_P(TOPIC_BUF, PUBLISH_TOPIC_TABLE[8]);
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
@@ -1650,13 +1657,15 @@ void MqttStateError1()
 {
   if (mqttconnected)
   {
-    char buf[1];
-    //itoa(stateError1, buf, 2);
-    snprintf(buf, 2, "%d", stateError1);
+    char buf[3];
+    itoa(stateError1, buf, 10);
+    // snprintf(buf, sizeof(buf), "%d", stateError1);
+
 
     byte bufLen = strlen_P(STS_stateError1);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[9])));
+    // strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[9])));
+    sprintf_P(TOPIC_BUF, PUBLISH_TOPIC_TABLE[9]);
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
@@ -1665,13 +1674,14 @@ void MqttStateError2()
 {
   if (mqttconnected)
   {
-    char buf[1];
-    itoa(stateError2, buf, 2);
+    char buf[3];
+    itoa(stateError2, buf, 10);
     //mqtt.publish("/rumah/sts/pompa/stateError2", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateError2);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[10])));
+    // strcpy_P(TOPIC_BUF, (const char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[10])));
+    sprintf_P(TOPIC_BUF, PUBLISH_TOPIC_TABLE[10]);
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
@@ -1680,13 +1690,14 @@ void MqttStateError3()
 {
   if (mqttconnected)
   {
-    char buf[1];
-    itoa(stateError3, buf, 2);
+    char buf[3];
+    itoa(stateError3, buf, 10);
     //mqtt.publish("/rumah/sts/pompa/stateError3", buf, 0, 0);
 
     byte bufLen = strlen_P(STS_stateError3);
     char TOPIC_BUF[bufLen + 1];
-    strcpy_P(TOPIC_BUF, (char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[11])));
+    // strcpy_P(TOPIC_BUF, (const char *)pgm_read_word(&(PUBLISH_TOPIC_TABLE[11])));
+    sprintf_P(TOPIC_BUF, PUBLISH_TOPIC_TABLE[11]);
     mqtt.publish(TOPIC_BUF, buf, 0, 0);
   }
 }
@@ -1702,13 +1713,13 @@ void MqttCONNECTED()
     char TOPIC_BUF[len + 1];
     sprintf_P(TOPIC_BUF, STS_mqttCONNECTED);
 
-    // //construct payload
-    // len = strlen_P(STRCONNECTED);
-    // char PAYLOAD_BUF[len + 1];
-    // sprintf_P(PAYLOAD_BUF, STRCONNECTED);
+    //construct payload
+    len = strlen_P(STRCONNECTED);
+    char PAYLOAD_BUF[len + 1];
+    sprintf_P(PAYLOAD_BUF, STRCONNECTED);
 
-    // mqtt.publish(TOPIC_BUF, PAYLOAD_BUF, 0, 0);
-    mqtt.publish(TOPIC_BUF, "CONNECTED", 0, 0);
+    mqtt.publish(TOPIC_BUF, PAYLOAD_BUF, 0, 0);
+    // mqtt.publish(TOPIC_BUF, "CONNECTED", 0, 0);
   }
 }
 

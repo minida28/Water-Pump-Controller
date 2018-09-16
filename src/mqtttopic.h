@@ -19,7 +19,7 @@ const char ONE [] PROGMEM = "1";
 const char TRUE [] PROGMEM = "true";
 const char CONNECTED [] PROGMEM = "CONNECTED";
 
-const char* const RECEIVE_PAYLOAD_TABLE[] PROGMEM =
+const PROGMEM char * const PROGMEM RECEIVE_PAYLOAD_TABLE[] =
 {
   ZERO,
   FALSE,
@@ -43,7 +43,7 @@ const char STS_stateError2 [] PROGMEM               = "/rumah/sts/pompa/stateErr
 const char STS_stateError3 [] PROGMEM               = "/rumah/sts/pompa/stateError3";
 const char STS_mqttCONNECTED [] PROGMEM             = "/rumah/sts/pompa/status";
 
-const char* const PUBLISH_TOPIC_TABLE[] PROGMEM =
+const PROGMEM char * const PROGMEM PUBLISH_TOPIC_TABLE[] =
 {
   STS_stateLevelSwitch,
   STS_stateSwitchManualMode,
@@ -64,7 +64,8 @@ const char* const PUBLISH_TOPIC_TABLE[] PROGMEM =
 const char STRCONNECTED [] PROGMEM = "CONNECTED";
 const char STRDISCONNECTED [] PROGMEM = "DISCONNECTED";
 
-const char* const PUBLISH_PAYLOAD_TABLE[] PROGMEM =
+const PROGMEM char * const PROGMEM PUBLISH_PAYLOAD_TABLE[] =
+
 {
   STRCONNECTED,
   STRDISCONNECTED

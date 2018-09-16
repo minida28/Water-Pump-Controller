@@ -17,9 +17,9 @@ class toggleSwitch
 
     // the following variables are long's because the time, measured in miliseconds,
     // will quickly become a bigger number than can be stored in an int.
-    long lastToggleTime;  // the last time the output pin was toggled
-    long onDelayTime;    // delay time from LOW to HIGH
-    long offDelayTime;     // delay time from HIGH to LOW
+    unsigned long lastToggleTime;  // the last time the output pin was toggled
+    unsigned long onDelayTime;    // delay time from LOW to HIGH
+    unsigned long offDelayTime;     // delay time from HIGH to LOW
 
     // Constructor - creates a Flasher
     // and initializes the member variables and state

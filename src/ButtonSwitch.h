@@ -18,8 +18,8 @@ class buttonSwitch
 
     // the following variables are long's because the time, measured in miliseconds,
     // will quickly become a bigger number than can be stored in an int.
-    long lastDebounceTime;  // the last time the output pin was toggled
-    long debounceDelay;    // the debounce time; increase if the output flickers
+    unsigned long lastDebounceTime;  // the last time the output pin was toggled
+    unsigned long debounceDelay;    // the debounce time; increase if the output flickers
 
     // Constructor - creates a Flasher
     // and initializes the member variables and state
