@@ -229,7 +229,7 @@ void mqttConnected(void *response)
   Serial.println(F("MQTT CONNECTED"));
   //mqtt.subscribe("/esp-link/1");
   //mqtt.subscribe("/rumah/cmd/pompa/#", 1);
-  mqtt.subscribe(F("/rumah/cmd/pompa/#"), 2);
+  mqtt.subscribe("/rumah/cmd/pompa/#", 2);
   //mqtt.subscribe("/rumah/sts/1s/kwh1/watt");
   //mqtt.subscribe("cmd/pompa/#");
   //mqtt.subscribe("/esp-link/2", 1);
@@ -1415,7 +1415,8 @@ float measurePressureFAST()
 
   const int pressurePin = A1;
   int pressureZero = 102; //raw voltage reading when zero pressure; normally should be 102
-  float MPa = (analogRead(pressurePin) - pressureZero) * 0.000609756098;
+  float MPa = 0.0;
+  MPa = (analogRead(pressurePin) - pressureZero) * 0.000609756098;
 
   return MPa * 101.998; // 1 MPa = 101.9977334 meter Head
 
@@ -1441,7 +1442,7 @@ float measureCurrent()
   const unsigned long numSamples = sampleTime / sampleInterval;
   const int adc_zero = 506; // relative digital zero of the arduino input from ACS712 (could make this a variable and auto-adjust it)
   int sensitivity = 99;     // use 185 for 5A module, 100 for 20A Module and 66 for 30A Module
-  float Vrms;
+  float Vrms = 0.0;
   //float Irms;
   float noise = 0.03; //.... ??
 
@@ -1453,14 +1454,15 @@ float measureCurrent()
   // unsigned long timeStartCurrentSense;
   // unsigned long timeStopCurrentSense;
 
-  float currentAcc;
+  float currentAcc = 0.0;
   uint16_t count = 0;
   unsigned long prevMicros = micros() - sampleInterval;
   while (count < numSamples)
   {
     if (micros() - prevMicros >= sampleInterval)
     {
-      float adc_raw = (analogRead(currentPin) - adc_zero) * 4.882; // 4.882 berasal dari 5000mV/1024;
+      float adc_raw = 0.0;
+      adc_raw = (analogRead(currentPin) - adc_zero) * 4.882; // 4.882 berasal dari 5000mV/1024;
       currentAcc += (adc_raw * adc_raw);
       ++count;                      // ++x;   increment x by one and returns the new value of x
       prevMicros += sampleInterval; // x += y;   equivalent to the expression x = x + y;
@@ -1474,7 +1476,7 @@ float measureCurrent()
   //{
   //rms=0;
   //}
-  float Irms;
+  float Irms = 0.0;
   Irms = (Vrms / sensitivity) - noise;
   char buf[10];
   dtostrf(Irms, 4, 2, buf);
@@ -1529,7 +1531,7 @@ void MqttStateSwitchManualMode()
 {
   if (mqttconnected)
   {
-    char buf[1];
+    char buf[2];
     itoa(stateSwitchManualMode, buf, 10);
     //mqtt.publish("/rumah/sts/pompa/stateSwitchManualMode", buf, 0, 0);
 
