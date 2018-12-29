@@ -284,9 +284,9 @@ void mqttData(void *response)
   char bufTopic[64];
   char bufPayload[16];
 
-  res->popChar(bufTopic);  
+  res->popChar(bufTopic);
   Serial.print(F("Received: topic="));
-  Serial.println(bufTopic);  
+  Serial.println(bufTopic);
 
   digitalClockDisplay();
 
@@ -300,18 +300,24 @@ void mqttData(void *response)
   for (int i = 0; i < numRECEIVE_TOPIC_TABLE; i++)
   {
     uint8_t len;
-    len = strlen_P(RECEIVE_TOPIC_TABLE[i]);
-   
-    if (strncmp_P(bufTopic, (const char *)pgm_read_word(&(RECEIVE_TOPIC_TABLE[i])), len) == 0)
+    // len = strlen_P(RECEIVE_TOPIC_TABLE[i]); // WRONG !!! DO NOT USE THIS!!
+
+    char *ptr = (char *)pgm_read_word(&RECEIVE_TOPIC_TABLE[i]);
+    len = strlen(ptr);
+
+    if (strncmp_P(bufTopic, (const char *)pgm_read_word(&RECEIVE_TOPIC_TABLE[i]), len) == 0)
     {
       // Serial.println(F("Topic found!"));
       for (int k = 0; k < numRECEIVE_PAYLOAD_TABLE; k++)
       {
         len = strlen_P(RECEIVE_PAYLOAD_TABLE[k]);
 
-        if (strncmp_P(bufPayload, (const char *)pgm_read_word(&(RECEIVE_PAYLOAD_TABLE[k])), len) == 0)
+        if (strncmp_P(bufPayload, (const char *)pgm_read_word(&RECEIVE_PAYLOAD_TABLE[k]), len) == 0)
         {
-          // Serial.println(F("Data found!"));
+          // char buf[15];
+          // snprintf_P(buf, sizeof(buf), PSTR("k=%d, i=%d"), k, i);
+          // Serial.println(buf);
+
           if (k == 0 || k == 1)
           {
             if (i == 0)
@@ -758,10 +764,8 @@ void loop()
 
   /*-------------------- MANUAL MODE ON / ACTIVATED -------------------------*/
 
-  switch (MQTTstateSwitchManualMode)
+  if (MQTTstateSwitchManualMode)
   {
-  case HIGH:
-
     if (statePump == LOW && stateSolenoidValve == LOW)
     {
 
@@ -827,13 +831,12 @@ void loop()
         MqttStateSwitchPump();
       }
     }
+  }
 
-    break;
+  /*-------------------- AUTOMATIC MODE ACTIVATED -------------------------*/
 
-    /*-------------------- AUTOMATIC MODE ACTIVATED -------------------------*/
-
-  case LOW:
-
+  else
+  {
     if (stateError == LOW)
     {
       if (MQTTstateSwitchPump == HIGH || MQTTstateSwitchSolenoidValve == HIGH)
@@ -1089,8 +1092,6 @@ void loop()
         }
       }
     }
-
-    break;
   }
 
   if (statePump == HIGH)
@@ -1662,7 +1663,6 @@ void MqttStateError1()
     char buf[3];
     itoa(stateError1, buf, 10);
     // snprintf(buf, sizeof(buf), "%d", stateError1);
-
 
     byte bufLen = strlen_P(STS_stateError1);
     char TOPIC_BUF[bufLen + 1];
